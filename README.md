@@ -4,6 +4,16 @@ A lightweight browser-based app for revising medical knowledge with quizzes, fla
 
 **Copyright hoangderek**
 
+## Current build
+
+The current UI uses the pink medical-study dashboard with semantic status cards:
+
+- **Tổng câu hỏi** → document icon · pink
+- **Đã làm** → graduation-cap icon · green
+- **Đang đúng** → check-circle icon · teal
+- **Cần ôn lại** → review/clock icon · orange
+- **Chưa làm** → open-book icon · violet
+
 ## Features
 
 - Pink medical-study dashboard with semantic status cards.
@@ -63,6 +73,8 @@ Recommended schema:
 ```
 
 ### Important import behavior / known issues
+
+> **If an upload appears to be missing questions, do not immediately assume the JSON file is incomplete.** The most common cause is importing a corrected/full dataset with `Gộp` while an older partial copy is already stored in `localStorage`. Use **`Thay thế dataset cùng ID`** for a clean replacement, then compare the import counters before committing.
 
 1. **Use `Thay thế dataset cùng ID` when re-importing a corrected or complete version of the same dataset.**  
    `Gộp` intentionally skips duplicates. If an older partial dataset already exists, Merge mode can make a new upload appear to be missing questions.
