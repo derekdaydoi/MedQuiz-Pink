@@ -25,7 +25,47 @@
     for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
     if(!('DecompressionStream' in window)) throw new Error('Trình duyệt chưa hỗ trợ DecompressionStream.');
     const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-    const html=await new Response(stream).text();
+    let html=await new Response(stream).text();
+
+    // Dashboard V9 semantic metric cards. Kept here as a safe upgrade layer so
+    // older bundled builds can render the latest dashboard without breaking data/import logic.
+    if(!html.includes('metric-total')){
+      const css=`
+/* Dashboard metric semantics */
+.stats .stat{position:relative;overflow:hidden}
+.stats .stat::after{content:"";position:absolute;width:74px;height:74px;right:-24px;top:-28px;border-radius:50%;background:currentColor;opacity:.035;pointer-events:none}
+.stats .stat-icon{width:42px;height:42px;border-radius:14px;margin-bottom:9px}
+.stats .stat-icon svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.stats .metric-total{color:#D92D77;border-color:#F1C7D9;background:linear-gradient(145deg,#FFFFFF,#FFF2F7)}
+.stats .metric-total .stat-icon{background:#FCE1EC;color:#D92D77}.stats .metric-total b{color:#B72063}
+.stats .metric-done{color:#2E9B62;border-color:#CDE9D8;background:linear-gradient(145deg,#FFFFFF,#F2FBF6)}
+.stats .metric-done .stat-icon{background:#E5F6EC;color:#2E9B62}.stats .metric-done b{color:#237A4C}
+.stats .metric-correct{color:#168B8B;border-color:#C7E7E5;background:linear-gradient(145deg,#FFFFFF,#F0FBFA)}
+.stats .metric-correct .stat-icon{background:#DFF4F2;color:#168B8B}.stats .metric-correct b{color:#116E70}
+.stats .metric-review{color:#E67E32;border-color:#F1D7BF;background:linear-gradient(145deg,#FFFFFF,#FFF7EF)}
+.stats .metric-review .stat-icon{background:#FDEBDC;color:#E67E32}.stats .metric-review b{color:#C76520}
+.stats .metric-unseen{color:#7567C7;border-color:#DCD6F3;background:linear-gradient(145deg,#FFFFFF,#F7F5FD)}
+.stats .metric-unseen .stat-icon{background:#ECE8FA;color:#7567C7}.stats .metric-unseen b{color:#6254B5}
+`;
+      html=html.replace('</style>',css+'\n</style>');
+
+      const oldStats=`<div class="stats">
+          <div class="stat"><div class="stat-icon">▤</div><span>Tổng câu hỏi</span><b id="sTotal">0</b></div>
+          <div class="stat"><div class="stat-icon">✓</div><span>Đã làm</span><b id="sDone">0</b></div>
+          <div class="stat"><div class="stat-icon">★</div><span>Đang đúng</span><b id="sCorrect">0</b></div>
+          <div class="stat"><div class="stat-icon">↻</div><span>Cần ôn lại</span><b id="sWrong">0</b></div>
+          <div class="stat"><div class="stat-icon">○</div><span>Chưa làm</span><b id="sUnseen">0</b></div>
+        </div>`;
+      const newStats=`<div class="stats">
+          <div class="stat metric-total"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v5h5"/><path d="M10 12h6M10 16h6"/></svg></div><span>Tổng câu hỏi</span><b id="sTotal">0</b></div>
+          <div class="stat metric-done"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 9 9-5 9 5-9 5z"/><path d="M7 12v4c2.7 2 7.3 2 10 0v-4"/><path d="M21 9v6"/></svg></div><span>Đã làm</span><b id="sDone">0</b></div>
+          <div class="stat metric-correct"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></div><span>Đang đúng</span><b id="sCorrect">0</b></div>
+          <div class="stat metric-review"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/><path d="M6.5 5.8 4 6.2l.4-2.5"/></svg></div><span>Cần ôn lại</span><b id="sWrong">0</b></div>
+          <div class="stat metric-unseen"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5.5c3.4-.9 6-.4 8 1.5v12c-2-1.9-4.6-2.4-8-1.5z"/><path d="M20 5.5c-3.4-.9-6-.4-8 1.5v12c2-1.9 4.6-2.4 8-1.5z"/></svg></div><span>Chưa làm</span><b id="sUnseen">0</b></div>
+        </div>`;
+      if(html.includes(oldStats)) html=html.replace(oldStats,newStats);
+    }
+
     document.open();document.write(html);document.close();
   }catch(err){
     document.getElementById('loading').innerHTML='<div style="max-width:680px;padding:32px;text-align:center"><h2>Không thể tải MedQuiz Pink</h2><p>'+String(err.message||err)+'</p><p>Hãy dùng Chrome, Edge, Firefox hoặc Safari phiên bản mới.</p></div>';
