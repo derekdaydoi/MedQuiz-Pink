@@ -4,25 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedQuiz Pink</title>
-<link rel="stylesheet" href="styles-a.css">
-<link rel="stylesheet" href="styles-b.css">
 </head>
-<body>
-<div id="app-root"></div>
-<script src="ui-1.js"></script>
-<script src="ui-2.js"></script>
-<script src="ui-3.js"></script>
-<script src="ui-render.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="app-core.js"></script>
-<script src="app-flash.js"></script>
-<script src="app-game.js"></script>
-<script src="app-quiz-main.js"></script>
-<script src="app-manage.js"></script>
-<script src="app-import-core.js"></script>
-<script src="app-import-parse.js"></script>
-<script src="app-import-preview.js"></script>
-<script src="app-import-actions.js"></script>
-<script src="app-progress.js"></script>
+<body style="margin:0;background:#fff3f8;font-family:Segoe UI,Arial,sans-serif">
+<div id="loading" style="min-height:100vh;display:grid;place-items:center;color:#7e1748">Đang tải MedQuiz Pink…</div>
+<script>window.__MEDQUIZ_BUNDLE__=[];</script>
+<script src="bundle-1.js"></script>
+<script src="bundle-2.js"></script>
+<script src="bundle-3.js"></script>
+<script src="bundle-4.js"></script>
+<script src="bundle-5a.js"></script>
+<script src="bundle-5b.js"></script>
+<script src="bundle-6a.js"></script>
+<script src="bundle-6b.js"></script>
+<script>
+(async()=>{
+  try{
+    const b64=window.__MEDQUIZ_BUNDLE__.join('');
+    const raw=atob(b64);
+    const bytes=new Uint8Array(raw.length);
+    for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
+    if(!('DecompressionStream' in window)) throw new Error('Trình duyệt chưa hỗ trợ DecompressionStream.');
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const html=await new Response(stream).text();
+    document.open();document.write(html);document.close();
+  }catch(err){
+    document.getElementById('loading').innerHTML='<div style="max-width:680px;padding:32px;text-align:center"><h2>Không thể tải MedQuiz Pink</h2><p>'+String(err.message||err)+'</p><p>Hãy dùng Chrome, Edge, Firefox hoặc Safari phiên bản mới.</p></div>';
+  }
+})();
+</script>
 </body>
 </html>
