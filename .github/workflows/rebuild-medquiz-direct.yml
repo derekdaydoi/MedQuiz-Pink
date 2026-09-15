@@ -14,160 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Rebuild standalone index
+      - name: Build direct app
         shell: bash
+        env:
+          REBUILD_B64: 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
         run: |
-          python <<'PY'
-          from pathlib import Path
-          import re, base64, gzip, subprocess
-          
-          names=['bundle-1.js','bundle-2.js','bundle-3.js','bundle-4.js','bundle-5a.js','bundle-5b.js','bundle-6a.js','bundle-6b.js']
-          parts=[]
-          for name in names:
-              text=Path(name).read_text(encoding='utf-8')
-              m=re.search(r"\.push\('([^']+)'\)",text,re.S)
-              if not m: raise RuntimeError(f'Cannot read bundle chunk: {name}')
-              parts.append(m.group(1))
-          html=gzip.decompress(base64.b64decode(''.join(parts))).decode('utf-8')
-          
-          # App must not depend on PDF.js just to open.
-          html = html.replace('<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>\n','')
-          
-          css = '''
-          .review-edit-card{padding:16px;border:1px solid #efcfdd;border-radius:18px;background:#fff9fc;margin-bottom:12px;box-shadow:0 5px 16px rgba(132,33,83,.06)}
-          .review-edit-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}.review-source-line{display:flex;gap:6px;flex-wrap:wrap}
-          .review-edit-options{display:grid;gap:8px;margin-top:10px}.review-edit-option{display:grid;grid-template-columns:34px minmax(0,1fr) 38px;gap:8px;align-items:center}.review-edit-option input[type=radio]{width:auto}
-          .review-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.review-pager{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0 16px}
-          '''
-          html = html.replace('</style>', css+'\n</style>', 1)
-          html = html.replace('let managePage = 1;', 'let managePage = 1;\nlet reviewQueuePage = 1;\nconst REVIEW_QUEUE_PAGE_SIZE = 25;', 1)
-          
-          # Editable persistent Review Queue.
-          a = html.index('function renderReviewTab(){')
-          b = html.index('\nfunction flashP(', a)
-          review_code = r'''function normalizedReviewText(q){return cleanMd(q?.text||q?.stem||q?.sample||'');}
-function normalizedReviewOpts(q){
-  if(Array.isArray(q?.opts)) return q.opts.map(x=>cleanMd(x));
-  if(Array.isArray(q?.options)) return q.options.map(x=>cleanMd(x&&typeof x==='object'?x.text:x));
-  return [];
-}
-function saveReviewDraft(i,card){
-  const q=reviewQueue[i]; if(!q||!card) return;
-  q.text=cleanMd(card.querySelector('[data-rq-stem]')?.value||q.text||q.stem||q.sample||''); q.stem=q.text;
-  q.topic=cleanMd(card.querySelector('[data-rq-topic]')?.value||q.topic||'Chưa phân loại')||'Chưa phân loại';
-  q.opts=[...card.querySelectorAll('[data-rq-option]')].map(x=>cleanMd(x.value));
-  const picked=card.querySelector('[data-rq-answer]:checked'); q.correctDraft=picked?Number(picked.value):null;
-  q.answerStatus='needs_review'; q.updatedAt=new Date().toISOString(); persist();
-}
-function promoteReview(i,card){
-  const q=reviewQueue[i]; if(!q) return; saveReviewDraft(i,card);
-  const text=normalizedReviewText(q),opts=normalizedReviewOpts(q),correct=Number.isInteger(q.correctDraft)?q.correctDraft:null;
-  if(!text){alert('Stem đang trống.');return;}
-  if(opts.length<2||opts.length>6||opts.some(x=>!x)){alert('Cần từ 2 đến 6 lựa chọn và không được để option trống.');return;}
-  if(!Number.isInteger(correct)||correct<0||correct>=opts.length){alert('Hãy chọn đáp án đúng.');return;}
-  const item={...q,id:q.id||uid(),text,stem:text,opts,correct,answerStatus:'user_verified',review:{status:'user_verified',answer_basis:'user_review',confidence:'high',reviewed_at:new Date().toISOString()}};
-  delete item.correctDraft; delete item.options;
-  if(questions.some(x=>fingerprint(x)===fingerprint(item))){reviewQueue.splice(i,1);persist();refreshAll();return;}
-  questions.push(item); reviewQueue.splice(i,1);
-  if(item.topic&&!topicRegistry.some(t=>t.name===item.topic)) topicRegistry.push({id:slugTopicId(item.topic),name:item.topic,createdAt:new Date().toISOString(),source:'review'});
-  reviewQueuePage=Math.min(reviewQueuePage,Math.max(1,Math.ceil(reviewQueue.length/REVIEW_QUEUE_PAGE_SIZE))); persist(); refreshAll();
-}
-function renderReviewTab(){
-  const count=document.getElementById('reviewTabCount'),host=document.getElementById('reviewTabList'); if(count)count.textContent=`${reviewQueue.length} câu`; if(!host)return;
-  if(!reviewQueue.length){host.innerHTML='<div class="empty">Review Queue đang trống.</div>';return;}
-  const pages=Math.max(1,Math.ceil(reviewQueue.length/REVIEW_QUEUE_PAGE_SIZE)); reviewQueuePage=Math.max(1,Math.min(reviewQueuePage,pages));
-  const from=(reviewQueuePage-1)*REVIEW_QUEUE_PAGE_SIZE,rows=reviewQueue.slice(from,from+REVIEW_QUEUE_PAGE_SIZE);
-  host.innerHTML=`<div class="review-pager"><span class="small">${from+1}–${Math.min(from+rows.length,reviewQueue.length)} / ${reviewQueue.length}</span><div class="toolbar"><button id="rqPrev" ${reviewQueuePage<=1?'disabled':''}>← Trước</button><span class="small">Trang ${reviewQueuePage}/${pages}</span><button id="rqNext" ${reviewQueuePage>=pages?'disabled':''}>Sau →</button></div></div>`+rows.map((q,k)=>{
-    const i=from+k,opts=normalizedReviewOpts(q),draft=Number.isInteger(q.correctDraft)?q.correctDraft:(Number.isInteger(q.correct)?q.correct:null),page=q.sourceMeta?.page||q.source?.page||null,qno=q.sourceMeta?.question_no||q.source?.question_no||q.sourceOrder||null;
-    return `<div class="review-edit-card" data-rq-card="${i}"><div class="review-edit-head"><div class="review-source-line"><span class="badge warn">Needs Review</span>${page?`<span class="badge">Trang ${page}</span>`:''}${qno?`<span class="badge">Câu ${qno}</span>`:''}</div><button class="danger" data-rq-delete="${i}">Bỏ câu</button></div><div class="field"><label>Stem</label><textarea data-rq-stem>${escapeHtml(normalizedReviewText(q))}</textarea></div><div class="review-edit-options">${opts.map((o,j)=>`<div class="review-edit-option"><input type="radio" name="rq-${i}" value="${j}" data-rq-answer ${draft===j?'checked':''}><input data-rq-option value="${escapeHtml(o)}"><button class="danger" data-rq-remove="${j}">×</button></div>`).join('')}</div><div class="review-edit-actions"><button data-rq-add="${i}">+ Thêm lựa chọn</button></div><div class="field" style="margin-top:10px"><label>Topic</label><input data-rq-topic value="${escapeHtml(q.topic||'Chưa phân loại')}"></div><div class="small" style="margin-top:8px">${escapeHtml(q.detection?.evidence||q.detail||q.answerStatus||'Cần user kiểm tra.')}</div><div class="review-edit-actions"><button data-rq-save="${i}">Lưu nháp</button><button class="success" data-rq-promote="${i}">Xác nhận → Question Bank</button></div></div>`;
-  }).join('');
-  document.getElementById('rqPrev')?.addEventListener('click',()=>{reviewQueuePage--;renderReviewTab()}); document.getElementById('rqNext')?.addEventListener('click',()=>{reviewQueuePage++;renderReviewTab()});
-  host.querySelectorAll('[data-rq-save]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rqSave;saveReviewDraft(i,host.querySelector(`[data-rq-card="${i}"]`));alert('Đã lưu nháp.');});
-  host.querySelectorAll('[data-rq-promote]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rqPromote;promoteReview(i,host.querySelector(`[data-rq-card="${i}"]`));});
-  host.querySelectorAll('[data-rq-delete]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rqDelete;if(confirm('Bỏ câu này?')){reviewQueue.splice(i,1);persist();refreshAll();}});
-  host.querySelectorAll('[data-rq-add]').forEach(b=>b.onclick=()=>{const i=+b.dataset.rqAdd,card=host.querySelector(`[data-rq-card="${i}"]`);saveReviewDraft(i,card);const o=normalizedReviewOpts(reviewQueue[i]);if(o.length>=6){alert('Tối đa 6 lựa chọn.');return;}reviewQueue[i].opts=[...o,''];persist();renderReviewTab();});
-  host.querySelectorAll('[data-rq-remove]').forEach(b=>b.onclick=()=>{const card=b.closest('[data-rq-card]'),i=+card.dataset.rqCard,j=+b.dataset.rqRemove;saveReviewDraft(i,card);const o=normalizedReviewOpts(reviewQueue[i]);o.splice(j,1);reviewQueue[i].opts=o;reviewQueue[i].correctDraft=null;persist();renderReviewTab();});
-}'''
-          html = html[:a] + review_code + html[b:]
-          
-          # Raw parser: structural misses are reviewable, not discarded.
-          old = """    if(om.length<2){
-        invalid.push({
-          no:st.no,page,reason:'BROKEN_OPTIONS',
-          detail:'Không tách được ít nhất 2 lựa chọn.',
-          sample:cleanMd(body.slice(0,180))
-        });
-        continue;
-      }"""
-          new = """    if(om.length<2){
-        const item={id:uid(),text:cleanMd(body),stem:cleanMd(body),opts:[],correct:null,correctDraft:null,topic:topicAt(topicMarkers,st.markerStart),source:'raw-import',sourceMeta:{file:fileName||null,page:page||null,question_no:Number(st.no)||st.no||null},sourceOrder:Number(st.no)||null,importFileName:fileName||null,createdAt:new Date().toISOString(),answerStatus:'needs_manual_repair',detection:detection('needs_review','parser_could_not_split',0,'Parser không tách được options. Hãy sửa và thêm lựa chọn trong Review Queue.',['BROKEN_OPTIONS'])};
-        review.push(item); continue;
-      }"""
-          if old not in html: raise RuntimeError('BROKEN_OPTIONS block not found')
-          html = html.replace(old,new,1)
-          old = """    if(!qtext || opts.some(o=>!o)){
-        invalid.push({
-          no:st.no,page,reason:'BROKEN_STRUCTURE',
-          detail:!qtext?'Stem rỗng.':'Có option rỗng.',
-          sample:qtext||cleanMd(body.slice(0,180))
-        });
-        continue;
-      }"""
-          new = """    if(!qtext || opts.some(o=>!o)){
-        const base=rawQuestionBase({st,no:st.no,qtext:qtext||cleanMd(body),opts,topic:topicAt(topicMarkers,st.markerStart),page,fileName});
-        review.push({...base,correct:null,correctDraft:null,answerStatus:'needs_manual_repair',detection:detection('needs_review','parser_partial_structure',0.15,'Stem/options chưa sạch. Hãy sửa trong Review Queue.',['BROKEN_STRUCTURE'])});
-        continue;
-      }"""
-          if old not in html: raise RuntimeError('BROKEN_STRUCTURE block not found')
-          html = html.replace(old,new,1)
-          
-          # PDF.js only loads when a PDF is chosen.
-          a = html.index('async function extractPdf(file){')
-          b = html.index('\nfunction structurallyValid(',a)
-          pdf_code = r'''async function ensurePdfJs(){
-  if(window.pdfjsLib)return window.pdfjsLib;
-  const urls=[['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'],['https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js','https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js']];
-  for(const [src,worker] of urls){try{await new Promise((ok,bad)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=bad;document.head.appendChild(s)});if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc=worker;return window.pdfjsLib;}}catch{}}
-  throw new Error('Không tải được PDF.js. Kiểm tra mạng hoặc dùng JSON/TXT/MD.');
-}
-async function extractPdf(file){
-  const pdfjsLib=await ensurePdfJs(),data=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data}).promise,chunks=[];let textChars=0;
-  for(let p=1;p<=pdf.numPages;p++){const page=await pdf.getPage(p),tc=await page.getTextContent();chunks.push(`[[MEDQUIZ_PAGE:${p}]]`);let line='';for(const item of tc.items){const style=tc.styles?.[item.fontName]||{},hint=`${item.fontName||''} ${style.fontFamily||''}`.toLowerCase(),bold=/bold|black|semibold|demi/.test(hint);let piece=String(item.str||'');textChars+=piece.trim().length;if(bold&&piece.trim())piece=`**${piece}**`;line+=(line?' ':'')+piece;if(item.hasEOL){chunks.push(line);line='';}}if(line)chunks.push(line);}
-  if(textChars<80)throw new Error('PDF gần như không có text layer. Có thể là PDF scan/image; cần OCR trước.');return chunks.join('\n');
-}'''
-          html = html[:a] + pdf_code + html[b:]
-          
-          # Import no longer blocks on unresolved records: queue them.
-          a = html.index("document.getElementById('commitImportBtn').onclick=()=>{")
-          b = html.index('\n\n/* Progress */',a)
-          commit = r'''document.getElementById('commitImportBtn').onclick=()=>{
-  const incoming=[...(importBuffer.valid||[])],unresolved=[...(importBuffer.review||[])];if(!incoming.length&&!unresolved.length)return;let removed=0;
-  if(importBuffer.mode==='replace'&&importBuffer.datasetId){const old=questions.filter(q=>q.datasetId===importBuffer.datasetId);removed=old.length;const ids=new Set(old.map(q=>q.id));questions=questions.filter(q=>q.datasetId!==importBuffer.datasetId);ids.forEach(id=>delete progress[id]);reviewQueue=reviewQueue.filter(q=>q.datasetId!==importBuffer.datasetId);if(session&&session.queue?.some(id=>ids.has(id)))session=null;}
-  questions.push(...incoming);unresolved.forEach(q=>reviewQueue.push({...q,correct:null,answerStatus:q.answerStatus||'needs_review',queuedAt:new Date().toISOString(),review:{status:'needs_review',answer_basis:'user_review_required',confidence:'unresolved'}}));
-  [...incoming,...unresolved].forEach(q=>{const n=cleanMd(q.topic||'');if(n&&!topicRegistry.some(t=>t.name===n))topicRegistry.push({id:slugTopicId(n),name:n,createdAt:new Date().toISOString(),source:'import'});});persist();
-  const imported=incoming.length,queued=unresolved.length,broken=(importBuffer.invalid||[]).length,dup=importBuffer.duplicate||0;importBuffer=blankImportBuffer();importReviewPage=1;reviewQueuePage=1;renderImportPreview();refreshAll();renderQuestion();alert(`Import hoàn tất: ${imported} câu vào Question Bank · ${queued} câu vào Review Queue · ${broken} Broken/Skipped · ${dup} Trùng.${removed?` Đã thay thế ${removed} câu cũ.`:''}`);
-};'''
-          html = html[:a] + commit + html[b:]
-          html = html.replace("document.getElementById('commitImportBtn').disabled=!b.valid.length||(b.review||[]).length>0;", "document.getElementById('commitImportBtn').disabled=!((b.valid||[]).length||(b.review||[]).length);",1)
-          html = html.replace("messages.push(`${b.review.length} câu cần user xác nhận đáp án. Commit đang bị khóa cho tới khi review hoặc bỏ các câu này.`);", "messages.push(`${b.review.length} câu sẽ vào Review Queue để user tự sửa/chọn đáp án.`);",1)
-          
-          Path('index.html').write_text(html,encoding='utf-8')
-          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',html,re.S)
-          Path('/tmp/medquiz-inline.js').write_text('\n'.join(scripts),encoding='utf-8')
-          subprocess.run(['node','--check','/tmp/medquiz-inline.js'],check=True)
-          assert 'DecompressionStream' not in html
-          assert 'data-rq-promote' in html and 'needs_manual_repair' in html
-          print('Built direct index.html',len(html))
-          PY
-      - name: Commit rebuilt app
+          printf '%s' "$REBUILD_B64" | base64 -d | gzip -d > /tmp/rebuild.py
+          python /tmp/rebuild.py
+      - name: Commit direct index
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          if git diff --cached --quiet; then
-            echo "No changes"
-            exit 0
-          fi
+          git diff --cached --quiet && exit 0
           git commit -m "fix: serve direct app and make PDF review editable"
           git push origin HEAD:main
