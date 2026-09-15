@@ -23,19 +23,97 @@ The current UI uses the pink medical-study dashboard with semantic status cards:
 - Persistent progress, wrong-answer pool and redemption/retry flow.
 - Question editor and JSON export.
 - Import from Quiz JSON V3, Source Archive V3, PDF, TXT and Markdown.
-- Review Queue for structurally valid questions that still need an answer review.
+- Staged import flow with **Upload → Analyze → Review → Commit**.
+- Inline answer review before unresolved questions are allowed into the Question Bank.
 
 ## Run
 
-Open `index.html` in a modern browser. The app stores the Question Bank, progress, topics, flashcard status and Review Queue in browser `localStorage`.
+Open `index.html` in a modern browser. The app stores the Question Bank, progress, topics, flashcard status and legacy Review Queue in browser `localStorage`.
 
 > Clearing browser/site data also clears locally stored MedQuiz data. Export important question banks before clearing storage.
 
-## Import: recommended workflow
+## Import V10: Upload → Analyze → Review → Commit
 
-For reliable production use, **JSON is the canonical input**. PDF/TXT/MD should be treated as source material that is converted or parsed into the canonical JSON format before long-term use.
+The import pipeline is intentionally conservative. MedQuiz Pink does **not** silently guess an answer when the uploaded source does not provide enough evidence.
 
-Recommended schema:
+### 1. Upload
+
+Supported input:
+
+- `quiz.input.v3` JSON
+- `quiz.normalized.v3` JSON
+- `quiz.source-archive.v3` JSON
+- legacy MedQuiz JSON
+- PDF with a readable text layer
+- TXT / Markdown
+
+For reliable production use, **reviewed JSON is still the canonical input**. PDF/TXT/MD are source formats that must pass through the parser and review process before entering the Question Bank.
+
+### 2. Analyze
+
+Every detected question is classified into one of three states:
+
+- **Ready** — stem/options are structurally valid and the answer is supported by a strong source signal.
+- **Needs Review** — stem/options are valid, but the answer is missing, conflicting or not sufficiently trustworthy.
+- **Broken** — the parser cannot recover a valid single-choice question structure, for example missing stem, broken options or malformed records.
+
+The Analyze screen shows:
+
+- `Theo metadata`
+- `Nhận diện`
+- `Ready`
+- `Needs Review`
+- `Trùng`
+- `Broken`
+
+The parser also preserves source metadata when available, including PDF page and source question number.
+
+### Answer detection
+
+For raw PDF/TXT/Markdown, strong answer signals currently include patterns such as:
+
+- `Đáp án: B`
+- `Đáp án đúng: C`
+- `Answer: D`
+- a single clearly bold-marked option when that formatting survives extraction
+- a single explicit check/correct marker
+
+Detection provenance is kept internally with fields such as answer basis, confidence and issues.
+
+**Important:** the standalone browser build does not use model knowledge to solve medical questions. If the source does not provide a sufficiently reliable answer signal, the question goes to **Needs Review**.
+
+### 3. Review
+
+Questions in **Needs Review** appear directly in the import workspace instead of being silently committed.
+
+For each question, the user can:
+
+- select the correct option with a radio button;
+- edit the stem;
+- edit each option;
+- edit the topic;
+- inspect source page / source question number when available;
+- see why the parser requested review;
+- skip a bad question explicitly.
+
+The review workspace is paginated to avoid rendering very large imports all at once.
+
+`Lưu các câu đã chọn` converts reviewed questions to **Ready** and records them as `user_verified` / `user_review`.
+
+### 4. Commit
+
+Commit is locked while any question remains in **Needs Review**.
+
+The user must either:
+
+- choose/fix the answer and save the reviewed question; or
+- explicitly skip that question.
+
+Only **Ready** questions are written to the Question Bank. **Broken / Skipped** records are excluded.
+
+This prevents unresolved questions from contaminating the production quiz bank.
+
+## Recommended production JSON
 
 ```json
 {
@@ -72,43 +150,37 @@ Recommended schema:
 }
 ```
 
-### Important import behavior / known issues
+## Important import behavior / known issues
 
-> **If an upload appears to be missing questions, do not immediately assume the JSON file is incomplete.** The most common cause is importing a corrected/full dataset with `Gộp` while an older partial copy is already stored in `localStorage`. Use **`Thay thế dataset cùng ID`** for a clean replacement, then compare the import counters before committing.
+1. **Use `Thay thế dataset cùng ID` when importing a corrected/full version of the same dataset.**  
+   `Gộp` intentionally skips duplicate questions. If an older partial copy already exists in `localStorage`, Merge mode can make a new upload appear to be missing records.
 
-1. **Use `Thay thế dataset cùng ID` when re-importing a corrected or complete version of the same dataset.**  
-   `Gộp` intentionally skips duplicates. If an older partial dataset already exists, Merge mode can make a new upload appear to be missing questions.
+2. **Do not interpret `Broken` as “wrong answer”.**  
+   `Broken` means the question structure itself cannot safely enter a single-choice quiz. `Needs Review` is the state for structurally valid questions whose answer still requires confirmation.
 
-2. **Check all import counters before committing:**
-   - `Theo metadata`: `dataset.question_count` declared by the file.
-   - `Nhận diện`: number of question records actually found.
-   - `Sẵn sàng`: valid questions that can enter the Question Bank.
-   - `Cần review`: structurally valid questions without a sufficiently resolved answer.
-   - `Trùng`: questions skipped by duplicate detection.
-   - `Lỗi schema`: malformed records or invalid `correct_answer` references.
+3. **`Source Archive V3` unresolved records now enter the staged Review workspace.**  
+   They are no longer automatically treated as production-ready questions. A user must resolve or explicitly skip them before Commit.
 
-   For a clean production `quiz.input.v3` file, the ideal state is that metadata, detected and ready counts match, with zero schema errors.
+4. **A canonical JSON question with a missing/invalid `correct_answer` is reviewable when its stem/options are otherwise valid.**  
+   It is no longer automatically discarded as a schema error.
 
-3. **`Source Archive V3` is intentionally different from production Quiz JSON.**  
-   When importing `quiz.source-archive.v3`:
-   - questions marked `verified_from_source` go into the Question Bank;
-   - unresolved questions go into the Review Queue;
-   - unresolved records are not silently treated as wrong schema.
+5. **PDF import requires PDF.js from CDN.**  
+   Network access is required for browser-side PDF extraction in this build.
 
-4. **A question is not production-ready unless `correct_answer` points to an existing option ID.**  
-   The app does not guess a missing answer when importing canonical Quiz JSON.
+6. **Scanned/image-only PDFs are not OCR'd by this standalone build.**  
+   If the PDF contains almost no text layer, MedQuiz Pink stops the import and asks for OCR or a JSON/TXT source rather than pretending extraction succeeded.
 
-5. **Raw PDF import depends on PDF.js loaded from CDN.**  
-   PDF import therefore requires network access when using this build. JSON/TXT/MD do not depend on PDF.js extraction. For large or important datasets, convert PDF to reviewed JSON first instead of relying on browser-side PDF parsing as the source of truth.
+7. **PDF formatting is lossy.**  
+   Bold/highlight information may or may not survive PDF extraction depending on how the PDF was generated. Explicit answer-key text is more reliable than visual formatting.
 
-6. **Duplicate detection is deliberate.**  
-   Repeated questions may be skipped based on normalized question text and options. If the uploaded file says it contains more questions than the app imports, inspect the `Trùng`, `Cần review` and `Lỗi schema` counters before assuming the file is incomplete.
+8. **Duplicate detection is deliberate.**  
+   Repeated questions are detected using normalized stem + options. Check the `Trùng` counter if the detected count is larger than the final Ready count.
 
-7. **Browser storage has practical limits.**  
-   Very large datasets may eventually hit `localStorage` quota depending on browser/device. A future production architecture should move the Question Bank and progress history to IndexedDB or a backend database.
+9. **Browser storage has practical limits.**  
+   Large question banks can eventually hit `localStorage` quota depending on browser/device. A future production architecture should migrate questions and progress to IndexedDB or a backend database.
 
 ## Data philosophy
 
-MedQuiz Pink keeps the Question Bank as the single source of truth. Flashcards reuse the same question records instead of maintaining a second independent content store. This prevents edited quiz questions and flashcards from drifting out of sync.
+MedQuiz Pink keeps the Question Bank as the single source of truth. Flashcards reuse the same question records instead of maintaining a second independent content store, preventing edited quiz questions and flashcards from drifting out of sync.
 
-For imported content, source-derived answer keys and expert-reviewed answers should remain distinguishable in upstream datasets/audit files rather than being silently conflated.
+For imports, provenance matters: source-verified answers, user-reviewed answers and unresolved source records should remain distinguishable rather than being silently conflated.
