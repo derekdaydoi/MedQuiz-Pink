@@ -4,224 +4,2560 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MedQuiz Pink</title>
-</head>
-<body style="margin:0;background:#fff3f8;font-family:Segoe UI,Arial,sans-serif">
-<div id="loading" style="min-height:100vh;display:grid;place-items:center;color:#7e1748">Đang tải MedQuiz Pink…</div>
-<script>window.__MEDQUIZ_BUNDLE__=[];</script>
-<script src="bundle-1.js?v=12"></script>
-<script src="bundle-2.js?v=12"></script>
-<script src="bundle-3.js?v=12"></script>
-<script src="bundle-4.js?v=12"></script>
-<script src="bundle-5a.js?v=12"></script>
-<script src="bundle-5b.js?v=12"></script>
-<script src="bundle-6a.js?v=12"></script>
-<script src="bundle-6b.js?v=12"></script>
-<script>
-(async()=>{
-  async function gunzipText(bytes){
-    if(!('DecompressionStream' in window)) throw new Error('Trình duyệt chưa hỗ trợ giải nén dữ liệu của ứng dụng.');
-    const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();
-    const chunks=[];let total=0;
-    while(true){const {value,done}=await reader.read();if(done)break;if(value){chunks.push(value);total+=value.length;}}
-    const out=new Uint8Array(total);let offset=0;
-    for(const chunk of chunks){out.set(chunk,offset);offset+=chunk.length;}
-    return new TextDecoder('utf-8').decode(out);
-  }
+<meta name="application-name" content="MedQuiz Pink V13">
+<style>
 
-  try{
-    const b64=(window.__MEDQUIZ_BUNDLE__||[]).join('');
-    if(!b64||b64.length<1000) throw new Error('Không tải đủ file ứng dụng. Hãy refresh trang.');
-    const raw=atob(b64);const bytes=new Uint8Array(raw.length);
-    for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
-    let html=await gunzipText(bytes);
+:root{
+  --bg:#fff3f8;
+  --bg-2:#fdeaf3;
+  --surface:#fffafd;
+  --surface-strong:#ffffff;
+  --text:#34162d;
+  --text-soft:#6f5268;
+  --line:#f2cfdf;
+  --line-strong:#e9b9d0;
+  --pink:#e93382;
+  --pink-dark:#b91f62;
+  --pink-deep:#7e1748;
+  --pink-soft:#fde1ee;
+  --pink-soft-2:#fff0f7;
+  --rose:#f46f9f;
+  --plum:#5d1d4b;
+  --success:#2e9b62;
+  --success-soft:#eaf8f0;
+  --danger:#cc3b58;
+  --danger-soft:#fff0f3;
+  --warning:#b47420;
+  --warning-soft:#fff7e7;
+  --shadow:0 12px 34px rgba(132,33,83,.10);
+  --shadow-soft:0 5px 18px rgba(132,33,83,.08);
+  --radius-xl:28px;
+  --radius-lg:22px;
+  --radius:16px;
+  --radius-sm:12px;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  font-family:Aptos,"Segoe UI Variable","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 85% 0%, rgba(255,190,219,.34), transparent 28rem),
+    radial-gradient(circle at 0% 100%, rgba(255,215,232,.45), transparent 32rem),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea,select{font:inherit}
+button{
+  border:1px solid transparent;
+  border-radius:999px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:700;
+  color:var(--plum);
+  background:#f8e8f0;
+  transition:.16s ease;
+}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(133,30,79,.10)}
+button:active{transform:translateY(0)}
+button.primary{color:#fff;background:linear-gradient(135deg,var(--pink),#d82070);box-shadow:0 8px 18px rgba(233,51,130,.24)}
+button.primary:hover{background:linear-gradient(135deg,#f03d8b,#c91c68)}
+button.success{background:#e5f6ed;color:#267b50;border-color:#bfe6d0}
+button.danger{background:#fff1f4;color:var(--danger);border-color:#f0bdc8}
+button.ghost{background:#fff;border-color:var(--line)}
+button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+input,textarea,select{
+  width:100%;
+  border:1px solid var(--line-strong);
+  border-radius:14px;
+  padding:11px 13px;
+  color:var(--text);
+  background:#fff;
+  outline:none;
+}
+input:focus,textarea:focus,select:focus{border-color:#ee79aa;box-shadow:0 0 0 4px rgba(233,51,130,.10)}
+textarea{min-height:100px;resize:vertical}
+label{font-size:13px;font-weight:600;color:var(--plum)}
+svg{display:block}
+.icon{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.icon-lg{width:30px;height:30px}
+.small{font-size:12.5px;color:var(--text-soft)}
+.muted{color:var(--text-soft)}
+.hidden{display:none!important}
+.app-shell{display:grid;grid-template-columns:258px minmax(0,1fr);min-height:100vh}
+.sidebar{
+  position:sticky;top:0;height:100vh;padding:20px 16px;
+  background:rgba(255,250,253,.92);
+  backdrop-filter:blur(16px);
+  border-right:1px solid rgba(235,184,207,.75);
+  display:flex;flex-direction:column;gap:18px;z-index:30
+}
+.brand{display:flex;gap:12px;align-items:center;padding:7px 8px 12px}
+.brand-mark{
+  width:54px;height:54px;border-radius:18px;
+  display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,#f65a9a,#db2777);
+  box-shadow:0 10px 25px rgba(224,44,123,.26), inset 0 1px 0 rgba(255,255,255,.38)
+}
+.brand-copy h1{font-size:22px;line-height:1.05;margin:0;color:#5a1644;letter-spacing:-.035em}
+.brand-copy h1 em{font-style:italic;color:var(--pink)}
+.brand-copy .small{margin-top:5px;font-weight:650}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{
+  width:100%;display:flex;align-items:center;justify-content:flex-start;gap:12px;
+  padding:11px 13px;border-radius:15px;background:transparent;color:#55334b;border:1px solid transparent;
+  box-shadow:none
+}
+.nav button:hover{background:#fff0f7;border-color:#f8d4e4;box-shadow:none}
+.nav button.active{background:linear-gradient(135deg,#ffe4f0,#fbd5e7);color:var(--pink-dark);border-color:#f6c9dc}
+.nav button .icon{width:21px;height:21px}
+.sidebar-note{
+  margin-top:auto;padding:16px;border-radius:20px;background:linear-gradient(145deg,#fff0f7,#ffe0ee);
+  border:1px solid #f6c9dc;box-shadow:var(--shadow-soft)
+}
+.sidebar-note b{display:block;color:var(--pink-dark);font-size:15px}
+.sidebar-note .pulse-mini{margin-top:12px;height:42px;border-radius:14px;background:#fff7fb;display:flex;align-items:center;justify-content:center;color:var(--pink)}
+.main{min-width:0;padding:18px 22px 34px}
+.top-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:22px 26px;margin-bottom:16px;border-radius:var(--radius-xl);
+  background:linear-gradient(115deg,#fffafd 15%,#ffe8f3 100%);
+  border:1px solid #f4cede;box-shadow:var(--shadow)
+}
+.top-banner h2{margin:0;color:#72184d;font-size:28px;letter-spacing:-.035em}
+.top-banner p{margin:5px 0 0;color:#76566d}
+.banner-art{display:flex;align-items:center;gap:12px;color:var(--pink-dark);font-weight:700}
+.banner-heart{
+  width:62px;height:62px;border-radius:22px;display:grid;place-items:center;
+  background:linear-gradient(145deg,#ffb5d2,#f45b99);color:#fff;box-shadow:0 10px 22px rgba(232,54,132,.20)
+}
+.container{max-width:1520px;margin:0 auto}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:15px}
+.span-12{grid-column:span 12}.span-9{grid-column:span 9}.span-8{grid-column:span 8}.span-7{grid-column:span 7}
+.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+.card{
+  background:rgba(255,255,255,.90);
+  border:1px solid rgba(238,195,215,.90);
+  border-radius:var(--radius-lg);
+  padding:18px;
+  box-shadow:var(--shadow-soft);
+}
+.card.strong{box-shadow:var(--shadow);background:#fff}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.card-title{display:flex;align-items:center;gap:9px;margin:0;color:#681944;font-size:17px;font-weight:700}
+.card-title .icon{color:var(--pink)}
+.page-title{margin:0 0 4px;color:#681944;font-size:26px;letter-spacing:-.03em}
+.page-sub{margin:0 0 16px;color:var(--text-soft)}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.stat{
+  min-height:108px;border-radius:19px;padding:14px 15px;
+  background:linear-gradient(145deg,#fff,#fff4f8);
+  border:1px solid #f2d4e1;box-shadow:0 7px 18px rgba(120,26,70,.07)
+}
+.stat-icon{width:39px;height:39px;border-radius:13px;display:grid;place-items:center;background:#ffe2ef;color:var(--pink);margin-bottom:8px}
+.stat span{display:block;color:var(--text-soft);font-size:12px;font-weight:700}
+.stat b{display:block;margin-top:2px;font-size:25px;color:#9e1b5c;font-variant-numeric:tabular-nums}
+.progress{height:9px;background:#f3dce6;border-radius:999px;overflow:hidden}
+.progress>div{height:100%;background:linear-gradient(90deg,#ec3d86,#d82876);border-radius:inherit;transition:.25s}
+.dashboard-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:15px;margin-top:15px}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.quick-action{padding:16px;border-radius:18px;background:#fff5f9;border:1px solid #f1cfdd;cursor:pointer;transition:.16s}
+.quick-action:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft)}
+.quick-action b{display:block;color:#7d1a50;margin-top:8px}
+.quick-action .small{margin-top:3px}
+.topic-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.topic-mini{padding:12px;border:1px solid #f1d1df;border-radius:16px;background:#fff8fb}
+.topic-mini b{display:block;color:#681944;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topic-mini .progress{margin-top:9px;height:7px}
+.wrong-list .list-item{padding:10px 0}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar>*{width:auto}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.quiz-layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:15px}
+.question{
+  margin:15px 0 18px;padding:18px 20px;border-radius:20px;
+  background:linear-gradient(145deg,#fff9fc,#fff);
+  border:1px solid #f2d5e2;font-size:21px;line-height:1.55;font-weight:700;color:#35172d
+}
+.answer{
+  display:flex;align-items:center;gap:10px;padding:13px 15px;margin:9px 0;
+  border:1.5px solid #eec8d9;border-radius:16px;background:#fff;cursor:pointer;transition:.15s
+}
+.answer:hover{border-color:#ed77a8;background:#fff7fb;transform:translateY(-1px)}
+.answer b{display:grid;place-items:center;min-width:34px;height:34px;border-radius:12px;background:#ffe0ed;color:#a91e60}
+.answer.correct{border-color:#71c799;background:var(--success-soft)}
+.answer.correct b{background:#d9f2e4;color:#237a4b}
+.answer.wrong{border-color:#ea8fa2;background:var(--danger-soft)}
+.answer.wrong b{background:#ffdce3;color:#b33250}
+.answer.disabled{cursor:default}
+.result{padding:13px 15px;margin-top:14px;border-radius:16px;background:#fff7fb;border:1px solid #f1cfdd}
+.badge{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;background:#f8e5ee;color:#7b4264;font-size:11.5px;font-weight:700}
+.badge.ok{background:#e6f7ed;color:#277d51}.badge.bad{background:#fff0f3;color:#b23a55}.badge.warn{background:#fff5df;color:#9a651e}
+.kbd{display:inline-block;padding:1px 6px;border:1px solid #e3bed0;border-bottom-width:2px;border-radius:6px;background:white;font-size:11px}
+.game-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:12px 0}
+.game-metric{border:1px solid #efd0de;border-radius:16px;padding:10px 12px;background:#fff7fb}
+.game-metric span{display:block;font-size:11px;color:var(--text-soft);font-weight:600}.game-metric b{display:block;font-size:19px;color:#9d1d5c;margin-top:2px}
+.timer-bar{height:8px;background:#f3dbe5;border-radius:999px;overflow:hidden;margin-top:9px}.timer-bar>div{height:100%;background:linear-gradient(90deg,#ef4b8e,#cc2069);transition:width .25s linear}
+.powerups{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.powerup{background:#fff2f8;color:#9c205c;border:1px solid #edbfd3}.powerup.used{opacity:.4;text-decoration:line-through}
+.flash-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:15px}
+.flash-stage{perspective:1200px;min-height:420px}
+.flashcard{
+  width:100%;min-height:390px;position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.7,.2,1);
+  cursor:pointer
+}
+.flashcard.flipped{transform:rotateY(180deg)}
+.flash-face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:28px;border:1px solid #efc8da;
+  background:linear-gradient(145deg,#fff,#fff3f8);box-shadow:var(--shadow);
+  padding:30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center
+}
+.flash-face.back{transform:rotateY(180deg);background:linear-gradient(145deg,#fff9fc,#ffe9f2)}
+.flash-label{position:absolute;top:20px;left:22px}
+.flash-question{font-size:25px;font-weight:700;line-height:1.45;max-width:850px}
+.flash-answer{font-size:24px;font-weight:700;color:#a51d5e;line-height:1.45}
+.flash-hint{position:absolute;bottom:18px;color:#ac819a;font-size:12px}
+.flash-controls{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:13px}
+.flash-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+.flash-meta>div{padding:11px;border-radius:15px;background:#fff5f9;border:1px solid #f0d1df;text-align:center}
+.list-item{padding:13px 0;border-bottom:1px solid #f0d9e3}.list-item:last-child{border-bottom:0}
+.item-title{font-weight:600;line-height:1.5}.item-meta{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0}
+.search-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:9px}
+.option-edit{display:grid;grid-template-columns:34px 1fr 40px;gap:8px;align-items:center;margin-top:8px}
+.option-edit input[type=radio]{width:auto}
+.dropzone{border:1.5px dashed #e3a8c4;border-radius:20px;padding:28px;text-align:center;background:#fff8fb}
+.import-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:13px 0}.import-summary .stat{min-height:82px}.import-summary .stat b{font-size:20px}
+.preview{max-height:520px;overflow:auto;border:1px solid #efd0de;border-radius:16px;background:#fff}
+.preview-row{padding:11px 12px;border-bottom:1px solid #f2dce5}.preview-row:last-child{border-bottom:0}
+.notice{padding:13px 14px;border-radius:16px;background:#fff1f7;border:1px solid #efc7d8;color:#793151}
+.warning{background:#fff7e9;border-color:#efd9aa;color:#82581e}
+.topic-chip-list{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.topic-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid #efcadd;background:#fff6fa;border-radius:999px;padding:8px 11px;font-size:12.5px;font-weight:700;color:#7a2253}
+.topic-chip button{padding:2px 6px}
+.topic-row{display:grid;grid-template-columns:minmax(180px,2fr) repeat(4,minmax(80px,1fr));gap:8px;align-items:center;padding:11px 0;border-bottom:1px solid #f1dce5}
+.topic-row.header{font-size:11.5px;font-weight:700;color:var(--text-soft)}
+.empty{padding:30px;text-align:center;color:var(--text-soft)}
+.review-item{padding:14px;border-radius:16px;border:1px solid #efd1df;background:#fff8fb;margin-bottom:9px}
+.modal{position:fixed;inset:0;background:rgba(74,20,54,.48);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.modal-panel{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #efc6d8;border-radius:24px;padding:22px;box-shadow:0 30px 80px rgba(75,16,49,.25)}
+.modal-panel.small-panel{width:min(520px,100%)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.modal-head h2{margin:0;color:#681944}.close-btn{font-size:20px;padding:6px 10px}
+hr{border:0;border-top:1px solid #f0d7e2;margin:18px 0}
+.footer{text-align:center;color:#9a6d84;font-size:11.5px;padding:20px 0 0}
+.section-heading{display:flex;align-items:center;gap:8px;margin:0}.section-heading .icon{color:var(--pink)}
+.clinical-note{display:flex;gap:10px;align-items:flex-start}
+@media(max-width:1120px){
+  .app-shell{grid-template-columns:210px minmax(0,1fr)}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .dashboard-grid,.quiz-layout,.flash-layout{grid-template-columns:1fr}
+  .span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}
+  .topic-mini-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:760px){
+  .app-shell{display:block}
+  .sidebar{position:sticky;height:auto;padding:10px 12px;gap:8px;border-right:0;border-bottom:1px solid #efcadb}
+  .brand{padding:2px 4px}.brand-mark{width:44px;height:44px;border-radius:15px}.brand-copy h1{font-size:19px}
+  .nav{flex-direction:row;overflow:auto;padding-bottom:2px}.nav button{min-width:max-content;width:auto;padding:9px 11px}.nav button span{display:none}
+  .sidebar-note{display:none}
+  .main{padding:12px}.top-banner{padding:18px;border-radius:22px}.top-banner h2{font-size:22px}.banner-art{display:none}
+  .stats{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:1fr}.topic-mini-grid{grid-template-columns:1fr 1fr}
+  .search-grid,.form-grid{grid-template-columns:1fr}.import-summary{grid-template-columns:repeat(2,1fr)}
+  .game-strip{grid-template-columns:repeat(2,1fr)}.flash-question,.flash-answer{font-size:21px}
+  .topic-row{grid-template-columns:1fr 1fr 1fr}.topic-row .hide-mobile{display:none}
+}
 
-    const patchCss=`
+
+/* Dashboard metric semantics */
+.stats .stat{
+  position:relative;
+  overflow:hidden;
+}
+.stats .stat::after{
+  content:"";
+  position:absolute;
+  width:74px;
+  height:74px;
+  right:-24px;
+  top:-28px;
+  border-radius:50%;
+  background:currentColor;
+  opacity:.035;
+  pointer-events:none;
+}
+.stats .stat-icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  margin-bottom:9px;
+}
+.stats .stat-icon svg{
+  width:22px;
+  height:22px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+/* 1. Tổng số câu hỏi — tài liệu / question bank */
+.stats .metric-total{
+  color:#D92D77;
+  border-color:#F1C7D9;
+  background:linear-gradient(145deg,#FFFFFF,#FFF2F7);
+}
+.stats .metric-total .stat-icon{background:#FCE1EC;color:#D92D77}
+.stats .metric-total b{color:#B72063}
+
+/* 2. Đã làm — mũ tốt nghiệp / learning completed */
+.stats .metric-done{
+  color:#2E9B62;
+  border-color:#CDE9D8;
+  background:linear-gradient(145deg,#FFFFFF,#F2FBF6);
+}
+.stats .metric-done .stat-icon{background:#E5F6EC;color:#2E9B62}
+.stats .metric-done b{color:#237A4C}
+
+/* 3. Đang đúng — check-circle / current correctness */
+.stats .metric-correct{
+  color:#168B8B;
+  border-color:#C7E7E5;
+  background:linear-gradient(145deg,#FFFFFF,#F0FBFA);
+}
+.stats .metric-correct .stat-icon{background:#DFF4F2;color:#168B8B}
+.stats .metric-correct b{color:#116E70}
+
+/* 4. Cần ôn lại — clock / spaced review */
+.stats .metric-review{
+  color:#E67E32;
+  border-color:#F1D7BF;
+  background:linear-gradient(145deg,#FFFFFF,#FFF7EF);
+}
+.stats .metric-review .stat-icon{background:#FDEBDC;color:#E67E32}
+.stats .metric-review b{color:#C76520}
+
+/* 5. Chưa làm — open book / not started */
+.stats .metric-unseen{
+  color:#7567C7;
+  border-color:#DCD6F3;
+  background:linear-gradient(145deg,#FFFFFF,#F7F5FD);
+}
+.stats .metric-unseen .stat-icon{background:#ECE8FA;color:#7567C7}
+.stats .metric-unseen b{color:#6254B5}
+
+
+/* Import V10 — Upload → Analyze → Review → Commit */
+.import-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}
+.import-step{
+  display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:15px;
+  border:1px solid #efd0de;background:#fff8fb;color:#8b6278
+}
+.import-step .step-no{
+  width:28px;height:28px;border-radius:10px;display:grid;place-items:center;
+  background:#f7dfeb;color:#a32a64;font-weight:700
+}
+.import-step.active{border-color:#eb83ad;background:#fff0f6;color:#8f1f58;box-shadow:0 6px 18px rgba(194,41,104,.08)}
+.import-step.done{border-color:#c9e7d5;background:#f2fbf6;color:#26764c}
+.import-step.done .step-no{background:#dbf2e4;color:#28784e}
+.review-workspace{margin-top:14px}
+.review-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.review-card{
+  padding:14px;margin-bottom:10px;border:1px solid #efcadb;border-radius:18px;
+  background:linear-gradient(145deg,#fff,#fff8fb);box-shadow:0 5px 16px rgba(122,27,72,.06)
+}
+.review-card.selected{border-color:#d98cb0;background:#fff4f9}
+.review-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.review-source{display:flex;gap:6px;flex-wrap:wrap}
+.review-stem{min-height:76px}
+.review-option{
+  display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;margin-top:7px
+}
+.review-option input[type=radio]{width:auto;accent-color:#d92d77}
+.review-option input[type=text]{padding:9px 11px}
+.review-reason{margin-top:9px;padding:9px 11px;border-radius:12px;background:#fff4e7;color:#89581a;font-size:12px}
+.review-actions{display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px}
+.review-page{display:flex;align-items:center;gap:8px}
+.review-empty{padding:22px;text-align:center;border:1px dashed #e6bfd1;border-radius:16px;color:#8c667b;background:#fff9fc}
+.import-status-line{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.detect-basis{font-size:11px;padding:3px 7px;border-radius:999px;background:#f4e7ef;color:#82516b}
+@media(max-width:760px){
+  .import-steps{grid-template-columns:1fr 1fr}
+  .review-option{grid-template-columns:30px 1fr}
+}
+
+
+/* V13 — editable Review Queue + stable direct GitHub Pages build */
 .review-edit-card{padding:16px;border:1px solid #efcfdd;border-radius:18px;background:#fff9fc;margin-bottom:12px;box-shadow:0 5px 16px rgba(132,33,83,.06)}
 .review-edit-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
-.review-edit-options{display:grid;gap:8px;margin-top:10px}
-.review-edit-option{display:grid;grid-template-columns:34px minmax(0,1fr) 36px;gap:8px;align-items:center}
-.review-edit-option input[type=radio]{width:auto}
-.review-edit-option .remove-option{padding:6px 9px}
-.review-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .review-source-line{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-`;
-    html=html.replace('</style>',patchCss+'\n</style>');
+.review-edit-options{display:grid;gap:8px;margin-top:10px}
+.review-edit-option{display:grid;grid-template-columns:34px minmax(0,1fr) 38px;gap:8px;align-items:center}
+.review-edit-option input[type=radio]{width:auto}
+.review-edit-option .remove-option{padding:7px 10px}
+.review-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.review-pager{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:12px 0 16px}
+.review-pager .toolbar{margin-left:auto}
 
-    const patchScript=`<script>
-(function(){
-  if(typeof collectTopicMarkers!=='function'){
-    window.collectTopicMarkers=function(text){
-      const markers=[];
-      const major=/(^|---\\s*)([IVX]{1,6})\\.\\s*([A-ZÀ-Ỹ][A-ZÀ-Ỹ0-9 \\-–/&]{2,45}?)(?=\\s+(?:---|\\*\\*|Chào|Dựa|Câu|\\d{1,4}\\.))/g;
-      let m;
-      while((m=major.exec(text))){const name=cleanMd(m[3]).replace(/\\s+$/,'');if(name&&!/^NXB\\b/i.test(name))markers.push({pos:m.index,type:'major',name});}
-      const sub=/\\*\\*(Phần\\s+\\d+\\s*:[^*]{2,120})\\*\\*/gi;
-      while((m=sub.exec(text)))markers.push({pos:m.index,type:'sub',name:cleanMd(m[1])});
-      markers.sort((a,b)=>a.pos-b.pos);return markers;
-    };
-    window.topicAt=function(markers,pos){let major='Chưa phân loại',sub='';for(const mk of markers){if(mk.pos>pos)break;if(mk.type==='major'){major=mk.name;sub='';}else if(mk.type==='sub')sub=mk.name;}return sub?major+' / '+sub:major;};
-  }
+</style>
+</head>
 
-  // PDF/TXT parser V12: ưu tiên giữ dữ liệu để user sửa, không vứt câu chỉ vì parser tách chưa đẹp.
-  window.parseQuestionText=function(raw,fileName=''){
-    const text=normalizeSourceText(raw);
-    const topicMarkers=collectTopicMarkers(text);
-    const pageMarkers=collectPageMarkers(text);
-    const re=/(^|\\s)(?:Câu\\s*)?(\\d{1,4})\\s*(?:[.:]|\\/)\\s*(?=[(*A-ZÀ-Ỹ“"])/g;
-    const starts=[];let m;
-    while((m=re.exec(text)))starts.push({markerStart:m.index+(m[1]?m[1].length:0),bodyStart:re.lastIndex,no:m[2]});
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg class="icon-lg" viewBox="0 0 64 64" fill="none">
+          <path d="M32 54S10 40 10 22.5C10 13 20.5 8 28 15.5L32 20l4-4.5C43.5 8 54 13 54 22.5 54 40 32 54 32 54Z" fill="currentColor" opacity=".25"/>
+          <path d="M9 32h11l4-8 7 18 6-13 4 7h14" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <h1>MedQuiz <em>Pink</em></h1>
+        <div class="small">Copyright hoangderek</div>
+      </div>
+    </div>
 
-    const valid=[],review=[],invalid=[];
-    const existing=new Set(questions.map(fingerprint));let duplicate=0;
+    <nav class="nav">
+      <button data-tab="dashboard" class="active">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg><span>Dashboard</span>
+      </button>
+      <button data-tab="quiz">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span>Quiz</span>
+      </button>
+      <button data-tab="flashcards">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="6" width="14" height="12" rx="2"/><path d="M8 3h12v12"/></svg><span>Flashcards</span>
+      </button>
+      <button data-tab="manage">
+        <svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg><span>Question Bank</span>
+      </button>
+      <button data-tab="import">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4v11M8 11l4 4 4-4"/><path d="M5 20h14"/></svg><span>Import</span>
+      </button>
+      <button data-tab="progressTab">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-7M22 19V3"/></svg><span>Progress</span>
+      </button>
+      <button data-tab="reviewTab">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/></svg><span>Review Queue</span>
+      </button>
+      <button data-tab="topicsTab">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg><span>Topics</span>
+      </button>
+    </nav>
 
-    for(let i=0;i<starts.length;i++){
-      const st=starts[i],end=i+1<starts.length?starts[i+1].markerStart:text.length;
-      let body=stripPageMarkers(text.slice(st.bodyStart,end)).trim();
-      if(!body)continue;
-      const page=sourcePageAt(pageMarkers,st.markerStart);
-      const ansRe=/\\*{0,2}\\s*(?:Đáp\\s*án(?:\\s*đúng)?|Đ\\/?A|Answer|Correct\\s*answer)\\s*:?\\s*\\*{0,2}\\s*([A-F])[\\.\\)]?/i;
-      const explicit=ansRe.exec(body);
-      const optionZone=explicit?body.slice(0,explicit.index):body;
-      const optRe=/(^|\\s)(?:\\*{1,2})?([A-F])[\\.\\)](?:\\*{1,2})?\\s*/g;
-      const om=[];let x;
-      while((x=optRe.exec(optionZone)))om.push({start:x.index+(x[1]?x[1].length:0),contentStart:optRe.lastIndex,letter:x[2].toUpperCase(),markerBold:/\\*\\*/.test(x[0])});
+    <div class="sidebar-note">
+      <b>Kiến thức hôm nay,<br>Sức khỏe ngày mai.</b>
+      <div class="small" style="margin-top:6px">Ôn đều, sửa sai nhanh, tích lũy từng câu.</div>
+      <div class="pulse-mini">
+        <svg width="122" height="32" viewBox="0 0 122 32" fill="none">
+          <path d="M3 17h24l6-10 10 20 9-15 7 8h19l6-9 8 13 7-7h20" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </aside>
 
-      if(om.length<2){
-        review.push({
-          id:uid(),text:cleanMd(body),stem:cleanMd(body),opts:[],correct:null,correctDraft:null,
-          topic:topicAt(topicMarkers,st.markerStart),source:'raw-import',
-          sourceMeta:{file:fileName||null,page:page||null,question_no:Number(st.no)||st.no||null},
-          sourceOrder:Number(st.no)||null,importFileName:fileName||null,createdAt:new Date().toISOString(),
-          answerStatus:'needs_manual_repair',
-          detection:detection('needs_review','parser_could_not_split',0,'Parser không tách được options. User cần sửa stem/options thủ công.',['BROKEN_OPTIONS'])
-        });
-        continue;
-      }
+  <main class="main">
+    <div class="container">
 
-      const qtext=cleanMd(optionZone.slice(0,om[0].start));
-      const rawOpts=[];
-      for(let j=0;j<om.length;j++){
-        const oe=j+1<om.length?om[j+1].start:optionZone.length;
-        rawOpts.push({letter:om[j].letter,raw:optionZone.slice(om[j].contentStart,oe).trim(),markerBold:!!om[j].markerBold});
-      }
-      const opts=rawOpts.map(o=>cleanMd(o.raw));
-      const base=rawQuestionBase({st,no:st.no,qtext:qtext||cleanMd(body),opts,topic:topicAt(topicMarkers,st.markerStart),page,fileName});
+      <section id="dashboard" class="tab active">
+        <div class="top-banner">
+          <div>
+            <h2>Chào mừng bạn quay trở lại!</h2>
+            <p>Học có hệ thống, theo dõi sai sót và biến câu khó thành kiến thức bền vững.</p>
+          </div>
+          <div class="banner-art">
+            <span>Cố lên — bạn làm được mà!</span>
+            <div class="banner-heart">
+              <svg width="38" height="38" viewBox="0 0 64 64" fill="none">
+                <path d="M32 54S10 40 10 22.5C10 13 20.5 8 28 15.5L32 20l4-4.5C43.5 8 54 13 54 22.5 54 40 32 54 32 54Z" fill="currentColor"/>
+              </svg>
+            </div>
+          </div>
+        </div>
 
-      if(!qtext||opts.some(o=>!o)){
-        review.push({...base,correct:null,correctDraft:null,answerStatus:'needs_manual_repair',detection:detection('needs_review','parser_partial_structure',0.15,'Parser nhận diện câu nhưng stem/options chưa sạch. User cần sửa thủ công.',['BROKEN_STRUCTURE'])});
-        continue;
-      }
+        <div class="stats">
+          <div class="stat metric-total">
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 3h8l4 4v14H7z"/>
+                <path d="M15 3v5h5"/>
+                <path d="M10 12h6M10 16h6"/>
+              </svg>
+            </div>
+            <span>Tổng câu hỏi</span><b id="sTotal">0</b>
+          </div>
 
-      let correctLetter=null,det=null;
-      if(explicit){
-        correctLetter=explicit[1].toUpperCase();
-        det=detection('ready','explicit_answer_key',0.99,explicit[0],[]);
-      }else{
-        const boldMarked=rawOpts.filter(o=>o.markerBold||/^\\*\\*/.test(o.raw)||/\\*\\*$/.test(o.raw));
-        const checkMarked=rawOpts.filter(o=>/^(?:✓|✔|✅|☑)\\s*/.test(o.raw));
-        if(boldMarked.length===1){correctLetter=boldMarked[0].letter;det=detection('ready','bold_option',0.94,'Một lựa chọn được đánh dấu bold.',[]);}
-        else if(checkMarked.length===1){correctLetter=checkMarked[0].letter;det=detection('ready','marked_option',0.96,'Một lựa chọn có marker đúng/check.',[]);}
-        else if(boldMarked.length>1||checkMarked.length>1){det=detection('needs_review','conflicting_markers',0.35,'Có nhiều lựa chọn cùng mang marker đáp án.',['MULTIPLE_ANSWER_SIGNALS']);}
-        else det=detection('needs_review','no_source_answer',0.10,'Không tìm thấy answer key đủ chắc chắn.',['NO_SOURCE_ANSWER']);
-      }
+          <div class="stat metric-done">
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m3 9 9-5 9 5-9 5z"/>
+                <path d="M7 12v4c2.7 2 7.3 2 10 0v-4"/>
+                <path d="M21 9v6"/>
+              </svg>
+            </div>
+            <span>Đã làm</span><b id="sDone">0</b>
+          </div>
 
-      const correct=rawOpts.findIndex(o=>o.letter===correctLetter);
-      const fp=fingerprint(base);
-      if(existing.has(fp)){duplicate++;continue;}existing.add(fp);
-      if(correct>=0&&det?.status==='ready')valid.push({...base,correct,detection:det,review:{status:'source_verified',answer_basis:det.basis,confidence:'high'}});
-      else review.push({...base,correct:null,correctDraft:correct>=0?correct:null,detection:det||detection('needs_review','unknown',0.10,'',['NO_SOURCE_ANSWER']),answerStatus:'needs_review'});
+          <div class="stat metric-correct">
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8"/>
+                <path d="m8.5 12 2.2 2.2 4.8-5"/>
+              </svg>
+            </div>
+            <span>Đang đúng</span><b id="sCorrect">0</b>
+          </div>
+
+          <div class="stat metric-review">
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8"/>
+                <path d="M12 8v4l3 2"/>
+                <path d="M6.5 5.8 4 6.2l.4-2.5"/>
+              </svg>
+            </div>
+            <span>Cần ôn lại</span><b id="sWrong">0</b>
+          </div>
+
+          <div class="stat metric-unseen">
+            <div class="stat-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 5.5c3.4-.9 6-.4 8 1.5v12c-2-1.9-4.6-2.4-8-1.5z"/>
+                <path d="M20 5.5c-3.4-.9-6-.4-8 1.5v12c2-1.9 4.6-2.4 8-1.5z"/>
+              </svg>
+            </div>
+            <span>Chưa làm</span><b id="sUnseen">0</b>
+          </div>
+        </div>
+        <div class="progress" style="margin-top:12px"><div id="overallProgress"></div></div>
+
+        <div class="dashboard-grid">
+          <div class="card strong">
+            <div class="card-header">
+              <h3 class="card-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6"/></svg>
+                Bắt đầu học
+              </h3>
+              <span class="badge">MedQuiz Pink</span>
+            </div>
+            <div class="quick-actions">
+              <div class="quick-action" id="dashStartQuiz">
+                <div class="stat-icon">▶</div><b>Làm quiz</b><div class="small">Luyện theo chủ đề hoặc Challenge.</div>
+              </div>
+              <div class="quick-action" id="dashFlashcards">
+                <div class="stat-icon">▱</div><b>Flashcards</b><div class="small">Lật thẻ, đánh dấu nhớ/chưa nhớ.</div>
+              </div>
+              <div class="quick-action" id="dashWrong">
+                <div class="stat-icon">↻</div><b>Ôn câu sai</b><div class="small">Quay lại đúng những điểm yếu.</div>
+              </div>
+            </div>
+            <hr>
+            <div class="card-header">
+              <h3 class="card-title">Tiến độ theo chủ đề</h3>
+              <button class="ghost" id="dashOpenProgress">Xem chi tiết</button>
+            </div>
+            <div id="dashTopicCards" class="topic-mini-grid"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+                Câu cần quay lại
+              </h3>
+              <button class="ghost" id="dashOpenWrong">Mở pool sai</button>
+            </div>
+            <div id="dashWrongList" class="wrong-list"></div>
+            <hr>
+            <div class="card-header">
+              <h3 class="card-title">Flashcards</h3>
+              <span class="badge" id="dashFlashSummary">0 thẻ</span>
+            </div>
+            <div class="small">Dùng flashcards cho active recall: xem câu hỏi trước, tự trả lời, sau đó mới lật thẻ.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" class="tab">
+        <h2 class="page-title">Quiz</h2>
+        <p class="page-sub">Làm bài theo chủ đề, theo trạng thái câu hỏi hoặc Challenge với timer, streak và power-up.</p>
+        <div class="quiz-layout">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Thiết lập phiên học</h3></div>
+            <div class="field"><label>Chủ đề</label><select id="quizTopic"></select></div>
+            <div class="field" style="margin-top:10px">
+              <label>Loại câu</label>
+              <select id="quizMode">
+                <option value="all">Tất cả</option>
+                <option value="unseen">Chưa làm</option>
+                <option value="wrong">Câu đang sai</option>
+              </select>
+            </div>
+            <label style="display:flex;gap:8px;align-items:center;margin-top:12px">
+              <input id="shuffleQuiz" type="checkbox" checked style="width:auto"> Trộn thứ tự câu
+            </label>
+            <div class="field" style="margin-top:10px">
+              <label>Chế độ</label>
+              <select id="playStyle">
+                <option value="study">Học tập — không tính điểm</option>
+                <option value="challenge">Challenge — điểm, streak, timer, power-up</option>
+              </select>
+            </div>
+            <div class="field" style="margin-top:10px">
+              <label>Timer mỗi câu</label>
+              <select id="questionTimer">
+                <option value="0">Tắt</option>
+                <option value="15">15 giây</option>
+                <option value="30" selected>30 giây</option>
+                <option value="60">60 giây</option>
+              </select>
+            </div>
+            <div class="toolbar" style="margin-top:14px">
+              <button class="primary" id="startQuizBtn">Bắt đầu</button>
+              <button id="quickWrongBtn">Ôn câu sai</button>
+            </div>
+            <p class="small">Phím tắt: <span class="kbd">A</span>–<span class="kbd">F</span> chọn đáp án, <span class="kbd">Enter</span> sang câu tiếp.</p>
+          </div>
+          <div class="card strong" id="quizCard"><div class="empty">Chọn phạm vi rồi bấm “Bắt đầu”.</div></div>
+        </div>
+      </section>
+
+      <section id="flashcards" class="tab">
+        <h2 class="page-title">Flashcards</h2>
+        <p class="page-sub">Active recall từ chính ngân hàng câu hỏi. Không cần tạo bộ thẻ riêng.</p>
+        <div class="flash-layout">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Bộ thẻ</h3></div>
+            <div class="field"><label>Chủ đề</label><select id="flashTopic"></select></div>
+            <div class="field" style="margin-top:10px">
+              <label>Phạm vi</label>
+              <select id="flashMode">
+                <option value="all">Tất cả câu</option>
+                <option value="unseen">Chưa học bằng flashcard</option>
+                <option value="again">Cần xem lại</option>
+                <option value="wrong">Câu đang sai trong Quiz</option>
+              </select>
+            </div>
+            <label style="display:flex;gap:8px;align-items:center;margin-top:12px">
+              <input id="flashShuffle" type="checkbox" checked style="width:auto"> Trộn thẻ
+            </label>
+            <button class="primary" id="startFlashBtn" style="margin-top:14px">Bắt đầu Flashcards</button>
+            <div class="flash-meta">
+              <div><div class="small">Đã nhớ</div><b id="flashKnownCount">0</b></div>
+              <div><div class="small">Xem lại</div><b id="flashAgainCount">0</b></div>
+              <div><div class="small">Thẻ</div><b id="flashCounter">0/0</b></div>
+            </div>
+            <div class="progress" style="margin-top:12px"><div id="flashProgressBar"></div></div>
+            <p class="small" style="margin-bottom:0">Space: lật thẻ · ←/→: chuyển thẻ.</p>
+          </div>
+
+          <div>
+            <div class="flash-stage" id="flashCardStage">
+              <div class="empty card" style="min-height:390px;display:grid;place-items:center">Chọn bộ thẻ rồi bắt đầu.</div>
+            </div>
+            <div class="flash-controls">
+              <button id="flashPrevBtn">← Trước</button>
+              <button id="flashAgainBtn" class="danger">Chưa nhớ</button>
+              <button id="flashFlipBtn">Lật thẻ</button>
+              <button id="flashKnownBtn" class="success">Đã nhớ</button>
+              <button class="primary" id="flashNextBtn">Tiếp →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="manage" class="tab">
+        <h2 class="page-title">Question Bank</h2>
+        <p class="page-sub">Sửa câu hỏi, đáp án, chủ đề và lời giải; dữ liệu được lưu trên trình duyệt.</p>
+        <div class="grid">
+          <div class="card span-12">
+            <div class="card-header">
+              <h3 class="card-title">Kho câu hỏi</h3>
+              <div class="toolbar">
+                <button id="newTopicBtn">+ Chủ đề</button>
+                <button class="primary" id="newQuestionBtn">+ Thêm câu</button>
+                <button id="exportBtn">Xuất JSON</button>
+                <button class="danger" id="deleteAllBtn">Xóa toàn bộ</button>
+              </div>
+            </div>
+            <div class="search-grid">
+              <input id="searchQ" placeholder="Tìm nội dung câu hỏi...">
+              <select id="manageTopic"></select>
+              <select id="manageStatus">
+                <option value="all">Mọi trạng thái</option>
+                <option value="unseen">Chưa làm</option>
+                <option value="correct">Đang đúng</option>
+                <option value="wrong">Đang sai</option>
+              </select>
+            </div>
+          </div>
+          <div class="card span-12">
+            <div class="toolbar" style="justify-content:space-between">
+              <b id="questionCountLabel">0 câu</b>
+              <div class="toolbar">
+                <button id="prevPageBtn">← Trước</button>
+                <span class="small" id="pageLabel"></span>
+                <button id="nextPageBtn">Sau →</button>
+              </div>
+            </div>
+            <div id="questionList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="import" class="tab">
+        <h2 class="page-title">Import</h2>
+        <p class="page-sub">Pipeline mới: Upload → Analyze → Review → Commit. Câu chưa chắc đáp án sẽ không được tự động đưa vào Question Bank.</p>
+
+        <div class="import-steps" id="importSteps">
+          <div class="import-step active" data-import-step="1"><span class="step-no">1</span><div><b>Upload</b><div class="small">Chọn nguồn dữ liệu</div></div></div>
+          <div class="import-step" data-import-step="2"><span class="step-no">2</span><div><b>Analyze</b><div class="small">Parser + confidence</div></div></div>
+          <div class="import-step" data-import-step="3"><span class="step-no">3</span><div><b>Review</b><div class="small">Chọn/sửa đáp án</div></div></div>
+          <div class="import-step" data-import-step="4"><span class="step-no">4</span><div><b>Commit</b><div class="small">Đưa vào Question Bank</div></div></div>
+        </div>
+
+        <div class="grid">
+          <div class="card span-5">
+            <div class="notice">
+              <b>Nguyên tắc:</b> đáp án có source signal rõ ràng sẽ vào <b>Ready</b>. Câu có stem/options hợp lệ nhưng chưa đủ chắc sẽ vào <b>Needs Review</b>. Câu vỡ cấu trúc vào <b>Broken</b>.
+            </div>
+
+            <div class="dropzone" style="margin-top:14px">
+              <input id="sourceFile" type="file" accept=".pdf,.txt,.md,.json" class="hidden">
+              <button class="primary" id="chooseFileBtn">Chọn JSON / PDF / TXT / MD</button>
+              <div class="small" id="fileName" style="margin-top:9px">Chưa chọn file</div>
+            </div>
+
+            <div class="field" style="margin-top:14px">
+              <label>Cách nhập JSON</label>
+              <select id="jsonImportMode">
+                <option value="replace">Thay thế dataset cùng ID — khuyến nghị</option>
+                <option value="merge">Gộp, bỏ qua câu trùng</option>
+              </select>
+            </div>
+
+            <div class="field" style="margin-top:14px">
+              <label>Hoặc dán nội dung</label>
+              <textarea id="pasteText" placeholder="1. Câu hỏi...? A. ... B. **đáp án đúng** C. ... D. ..."></textarea>
+            </div>
+            <div class="toolbar" style="margin-top:11px">
+              <button id="parsePasteBtn">Analyze nội dung</button>
+              <button id="clearPreviewBtn">Xóa phiên import</button>
+            </div>
+
+            <hr>
+            <div class="card-header"><h3 class="card-title">Review Queue đã lưu</h3><button id="clearReviewQueueBtn">Xóa queue</button></div>
+            <div id="reviewQueueSummary" class="notice warning">Chưa có câu cần review.</div>
+
+            <hr>
+            <div class="card-header"><h3 class="card-title">Dataset đã nhập</h3></div>
+            <div class="field"><select id="importedFileSelect"></select></div>
+            <button class="danger" id="deleteImportedFileBtn" style="margin-top:10px">Xóa dataset cũ</button>
+            <p class="small">Nút này chỉ xóa dữ liệu trong app; không xóa file vật lý trên máy.</p>
+          </div>
+
+          <div class="card span-7">
+            <div class="card-header">
+              <h3 class="card-title">Analyze result</h3>
+              <span class="badge" id="importStageBadge">Chưa có dữ liệu</span>
+            </div>
+
+            <div class="import-summary">
+              <div class="stat"><span>Theo metadata</span><b id="pExpected">—</b></div>
+              <div class="stat"><span>Nhận diện</span><b id="pDetected">0</b></div>
+              <div class="stat"><span>Ready</span><b id="pValid">0</b></div>
+              <div class="stat"><span>Needs Review</span><b id="pReview">0</b></div>
+              <div class="stat"><span>Trùng</span><b id="pDuplicate">0</b></div>
+              <div class="stat"><span>Broken</span><b id="pInvalid">0</b></div>
+            </div>
+
+            <div id="importWarning" class="notice warning hidden"></div>
+
+            <div class="toolbar" style="margin:12px 0">
+              <button class="success" id="commitImportBtn" disabled>Commit vào Question Bank</button>
+            </div>
+
+            <div class="preview" id="importPreview"><div class="empty">Chưa có dữ liệu preview.</div></div>
+          </div>
+
+          <div class="card span-12 review-workspace" id="importReviewWorkspace">
+            <div class="review-toolbar">
+              <div>
+                <h3 class="card-title" style="margin-bottom:4px">Review đáp án trước khi import</h3>
+                <div class="small">Chọn đáp án đúng; có thể sửa trực tiếp stem, options và topic. Câu chưa xử lý sẽ chặn bước Commit.</div>
+              </div>
+              <div class="toolbar">
+                <button class="success" id="applyReviewedBtn">Lưu các câu đã chọn</button>
+                <button class="danger" id="skipUnresolvedBtn">Bỏ tất cả câu chưa xử lý</button>
+              </div>
+            </div>
+            <div class="review-toolbar">
+              <div class="import-status-line">
+                <span class="badge warn" id="reviewRemainingBadge">0 cần review</span>
+                <span class="badge ok" id="reviewResolvedBadge">0 đã chọn trong trang</span>
+              </div>
+              <div class="review-page">
+                <button id="reviewPrevBtn">←</button>
+                <span class="small" id="reviewPageLabel">Trang 1/1</span>
+                <button id="reviewNextBtn">→</button>
+              </div>
+            </div>
+            <div id="importReviewList"><div class="review-empty">Upload dữ liệu để bắt đầu review.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="progressTab" class="tab">
+        <h2 class="page-title">Progress</h2>
+        <p class="page-sub">Theo dõi độ phủ và trạng thái đúng/sai theo từng chủ đề.</p>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Tiến độ theo chủ đề</h3>
+            <button id="resetProgressBtn">Reset tiến độ</button>
+          </div>
+          <div id="topicProgress"></div>
+        </div>
+      </section>
+
+      <section id="reviewTab" class="tab">
+        <h2 class="page-title">Review Queue</h2>
+        <p class="page-sub">Những record có cấu trúc hợp lệ nhưng chưa đủ điều kiện vào production quiz.</p>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Các câu đang chờ xử lý</h3>
+            <span class="badge" id="reviewTabCount">0 câu</span>
+          </div>
+          <div id="reviewTabList"></div>
+        </div>
+      </section>
+
+      <section id="topicsTab" class="tab">
+        <h2 class="page-title">Topics</h2>
+        <p class="page-sub">Tạo chủ đề trước, sau đó gán câu hỏi thủ công hoặc qua import.</p>
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Danh sách chủ đề</h3>
+            <button class="primary" id="newTopicBtnSecondary">+ Tạo chủ đề</button>
+          </div>
+          <div id="topicChipList" class="topic-chip-list"></div>
+          <div id="topicOverview" class="topic-mini-grid" style="margin-top:16px"></div>
+        </div>
+      </section>
+
+      <footer class="footer">MedQuiz Pink · Copyright hoangderek</footer>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="topicModal">
+  <div class="modal-panel small-panel">
+    <div class="modal-head">
+      <h2>Tạo chủ đề mới</h2>
+      <button class="close-btn" id="closeTopicModalBtn">×</button>
+    </div>
+    <div class="field">
+      <label>Tên chủ đề</label>
+      <input id="newTopicName" placeholder="Ví dụ: GAN - ĐƯỜNG MẬT">
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Mã chủ đề</label>
+      <input id="newTopicId" placeholder="Ví dụ: HEPATOBILIARY">
+      <div class="small">Nếu để trống, app sẽ tự sinh từ tên chủ đề.</div>
+    </div>
+    <div class="toolbar" style="margin-top:16px">
+      <button class="primary" id="saveTopicBtn">Tạo chủ đề</button>
+      <button id="cancelTopicBtn">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="editorModal">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <h2 id="editorTitle">Thêm câu hỏi</h2>
+      <button class="close-btn" id="closeEditorBtn">×</button>
+    </div>
+    <div class="field">
+      <label>Chủ đề</label>
+      <input id="editTopic" list="topicSuggestions" placeholder="Ví dụ: GIẢI PHẪU">
+      <datalist id="topicSuggestions"></datalist>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Câu hỏi</label>
+      <textarea id="editText"></textarea>
+    </div>
+    <div style="margin-top:12px">
+      <label>Đáp án <span class="small">(chọn radio cho đáp án đúng)</span></label>
+      <div id="editOptions"></div>
+      <button id="addOptionBtn" style="margin-top:8px">+ Thêm lựa chọn</button>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label>Giải thích (không bắt buộc)</label>
+      <textarea id="editExplanation"></textarea>
+    </div>
+    <div class="toolbar" style="margin-top:16px">
+      <button class="primary" id="saveQuestionBtn">Lưu</button>
+      <button id="cancelEditorBtn">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const STORAGE = {
+  questions: 'quizAppV2.questions',
+  progress: 'quizAppV2.progress'
+};
+const LEGACY_KEY = 'quizQuestions';
+const PAGE_SIZE = 100;
+
+let questions = loadJson(STORAGE.questions, []);
+let progress = loadJson(STORAGE.progress, {});
+let topicRegistry = loadJson('quizAppV4.topics', []);
+let importBuffer = {valid:[], review:[], invalid:[], detected:0, duplicate:0, expected:null, datasetId:null, datasetTitle:null, fileName:null, mode:'merge'};
+let importReviewPage = 1;
+const IMPORT_REVIEW_PAGE_SIZE = 20;
+let reviewQueue = loadJson('quizAppV4.reviewQueue', []);
+let session = null;
+let editId = null;
+let managePage = 1;
+let reviewQueuePage = 1;
+const REVIEW_QUEUE_PAGE_SIZE = 25;
+
+function loadJson(key, fallback){
+  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+  catch { return fallback; }
+}
+function persist(){
+  localStorage.setItem(STORAGE.questions, JSON.stringify(questions));
+  localStorage.setItem(STORAGE.progress, JSON.stringify(progress));
+  localStorage.setItem('quizAppV4.reviewQueue', JSON.stringify(reviewQueue));
+  localStorage.setItem('quizAppV4.topics', JSON.stringify(topicRegistry));
+}
+function uid(){
+  return (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+}
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function cleanMd(s){
+  return String(s ?? '')
+    .replace(/\*\*/g,'')
+    .replace(/\s+/g,' ')
+    .replace(/^[\s\-–—:]+|[\s\-–—]+$/g,'')
+    .trim();
+}
+function normalizeKey(s){ return cleanMd(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim(); }
+function fingerprint(q){ return normalizeKey(q.text) + '||' + q.opts.map(normalizeKey).join('|'); }
+function shuffle(a){
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; }
+  return b;
+}
+function slugTopicId(s){
+  return cleanMd(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toUpperCase().replace(/[^A-Z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'TOPIC';
+}
+function getTopics(){
+  const fromQuestions=questions.map(q=>q.topic || 'Chưa phân loại');
+  const fromRegistry=topicRegistry.map(t=>t.name);
+  return [...new Set([...fromRegistry,...fromQuestions])].sort((a,b)=>a.localeCompare(b,'vi'));
+}
+function renderTopicManager(){
+  const host=document.getElementById('topicChipList');
+  if(!host) return;
+  const topics=getTopics();
+  if(!topics.length){host.innerHTML='<div class="small">Chưa có chủ đề.</div>';return}
+  host.innerHTML=topics.map(name=>{
+    const registered=topicRegistry.find(t=>t.name===name);
+    const count=questions.filter(q=>(q.topic||'Chưa phân loại')===name).length;
+    return `<span class="topic-chip">${escapeHtml(name)} <span class="small">${count} câu</span>`+
+      `${registered && count===0?`<button data-remove-topic="${escapeHtml(registered.id)}" title="Xóa chủ đề rỗng">×</button>`:''}</span>`;
+  }).join('');
+  host.querySelectorAll('[data-remove-topic]').forEach(btn=>btn.onclick=()=>{
+    const id=btn.dataset.removeTopic;
+    topicRegistry=topicRegistry.filter(t=>t.id!==id);
+    persist();refreshAll();
+  });
+}
+function openTopicModal(){
+  document.getElementById('newTopicName').value='';
+  document.getElementById('newTopicId').value='';
+  document.getElementById('topicModal').classList.add('open');
+  setTimeout(()=>document.getElementById('newTopicName').focus(),0);
+}
+function closeTopicModal(){document.getElementById('topicModal').classList.remove('open');}
+function saveTopic(){
+  const name=cleanMd(document.getElementById('newTopicName').value);
+  let id=cleanMd(document.getElementById('newTopicId').value).toUpperCase();
+  if(!name){alert('Tên chủ đề không được để trống.');return}
+  if(getTopics().some(t=>t.toLowerCase()===name.toLowerCase())){alert('Chủ đề đã tồn tại.');return}
+  if(!id) id=slugTopicId(name);
+  if(topicRegistry.some(t=>t.id===id)){id=id+'_'+(topicRegistry.length+1)}
+  topicRegistry.push({id,name,createdAt:new Date().toISOString()});
+  persist();closeTopicModal();refreshAll();
+}
+function getP(id){
+  return progress[id] || {attempts:0, correct:0, wrong:0, lastCorrect:null, lastAnsweredAt:null};
+}
+function migrateLegacy(){
+  if(questions.length) return;
+  const old = loadJson(LEGACY_KEY, []);
+  if(!Array.isArray(old) || !old.length) return;
+  questions = old.map(q=>({
+    id:String(q.id ?? uid()), text:q.text || '', opts:Array.isArray(q.opts)?q.opts:[],
+    correct:Number(q.correct)||0, explanation:q.explanation||'', topic:'Chưa phân loại',
+    source:'legacy', createdAt:new Date().toISOString()
+  }));
+  persist();
+}
+migrateLegacy();
+
+function overallStats(list=questions){
+  let done=0, correct=0, wrong=0, attempts=0;
+  list.forEach(q=>{
+    const p=getP(q.id);
+    attempts += p.attempts || 0;
+    if((p.attempts||0)>0){
+      done++;
+      if(p.lastCorrect===true) correct++;
+      else if(p.lastCorrect===false) wrong++;
     }
-    return {valid,review,invalid,detected:starts.length,duplicate,expected:null,datasetId:null,datasetTitle:null,fileName:fileName||null,mode:'merge',schemaVersion:null};
+  });
+  return {total:list.length,done,correct,wrong,unseen:list.length-done,attempts};
+}
+
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.id===id));
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));
+  clearQuizTimer();
+  if(id==='dashboard') renderDashboard();
+  if(id==='import') renderImportPreview();
+  if(id==='manage') renderManage();
+  if(id==='progressTab') renderProgress();
+  if(id==='flashcards') renderFlashcards();
+  if(id==='reviewTab') renderReviewTab();
+  if(id==='topicsTab'){ renderTopicManager(); renderTopicOverview(); }
+  refreshSelectors();
+  renderGlobalStats();
+}
+document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
+
+function refreshSelectors(){
+  const topics=getTopics();
+  const quizEl=document.getElementById('quizTopic');
+  const manageEl=document.getElementById('manageTopic');
+  const flashEl=document.getElementById('flashTopic');
+  const currentQuiz=quizEl?.value || '__all__';
+  const currentManage=manageEl?.value || '__all__';
+  const currentFlash=flashEl?.value || '__all__';
+  const opts='<option value="__all__">Tất cả chủ đề</option>'+topics.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+  if(quizEl) quizEl.innerHTML=opts;
+  if(manageEl) manageEl.innerHTML=opts;
+  if(flashEl) flashEl.innerHTML=opts;
+  if(quizEl && [...quizEl.options].some(o=>o.value===currentQuiz)) quizEl.value=currentQuiz;
+  if(manageEl && [...manageEl.options].some(o=>o.value===currentManage)) manageEl.value=currentManage;
+  if(flashEl && [...flashEl.options].some(o=>o.value===currentFlash)) flashEl.value=currentFlash;
+  document.getElementById('topicSuggestions').innerHTML=topics.map(t=>`<option value="${escapeHtml(t)}">`).join('');
+}
+function renderGlobalStats(){
+  const s=overallStats();
+  document.getElementById('sTotal').textContent=s.total;
+  document.getElementById('sDone').textContent=s.done;
+  document.getElementById('sCorrect').textContent=s.correct;
+  document.getElementById('sWrong').textContent=s.wrong;
+  document.getElementById('sUnseen').textContent=s.unseen;
+  document.getElementById('overallProgress').style.width=(s.total ? (s.done/s.total*100) : 0)+'%';
+}
+
+
+
+const FLASH_KEY='quizAppV6.flashProgress';
+let flashProgress=loadJson(FLASH_KEY,{});
+let flashSession=null;
+
+function persistFlash(){
+  localStorage.setItem(FLASH_KEY,JSON.stringify(flashProgress));
+}
+function renderDashboard(){
+  const topicHost=document.getElementById('dashTopicCards');
+  if(topicHost){
+    const topics=getTopics().map(t=>{
+      const qs=questions.filter(q=>(q.topic||'Chưa phân loại')===t);
+      return {name:t,stats:overallStats(qs)};
+    }).sort((a,b)=>b.stats.total-a.stats.total).slice(0,6);
+    topicHost.innerHTML=topics.length?topics.map(x=>{
+      const pct=x.stats.total?Math.round(x.stats.done/x.stats.total*100):0;
+      return `<div class="topic-mini"><b>${escapeHtml(x.name)}</b><div class="small">${x.stats.done}/${x.stats.total} đã làm · ${pct}%</div><div class="progress"><div style="width:${pct}%"></div></div></div>`;
+    }).join(''):'<div class="empty">Chưa có chủ đề.</div>';
+  }
+
+  const wrongHost=document.getElementById('dashWrongList');
+  if(wrongHost){
+    const wrong=questions.filter(q=>getP(q.id).lastCorrect===false).slice(0,5);
+    wrongHost.innerHTML=wrong.length?wrong.map(q=>`<div class="list-item"><div class="item-title">${escapeHtml(q.text)}</div><div class="item-meta"><span class="badge bad">Cần ôn</span><span class="badge">${escapeHtml(q.topic||'Chưa phân loại')}</span></div></div>`).join(''):'<div class="empty">Hiện không có câu đang sai.</div>';
+  }
+  const flashSummary=document.getElementById('dashFlashSummary');
+  if(flashSummary){
+    const learned=Object.values(flashProgress).filter(x=>x.attempts>0).length;
+    flashSummary.textContent=`${learned}/${questions.length} thẻ`;
+  }
+}
+function renderTopicOverview(){
+  const host=document.getElementById('topicOverview');
+  if(!host) return;
+  const topics=getTopics();
+  host.innerHTML=topics.length?topics.map(t=>{
+    const s=overallStats(questions.filter(q=>(q.topic||'Chưa phân loại')===t));
+    const pct=s.total?Math.round(s.done/s.total*100):0;
+    return `<div class="topic-mini"><b>${escapeHtml(t)}</b><div class="small">${s.total} câu · ${s.correct} đang đúng · ${s.wrong} cần ôn</div><div class="progress"><div style="width:${pct}%"></div></div></div>`;
+  }).join(''):'<div class="empty">Chưa có chủ đề.</div>';
+}
+function normalizedReviewText(q){
+  return cleanMd(q?.text||q?.stem||q?.sample||'');
+}
+function normalizedReviewOpts(q){
+  if(Array.isArray(q?.opts)) return q.opts.map(x=>cleanMd(x));
+  if(Array.isArray(q?.options)) return q.options.map(x=>cleanMd(x&&typeof x==='object'?x.text:x));
+  return [];
+}
+function saveReviewDraft(index,card){
+  const q=reviewQueue[index];
+  if(!q||!card) return false;
+  q.text=cleanMd(card.querySelector('[data-rq-stem]')?.value||q.text||q.stem||q.sample||'');
+  q.stem=q.text;
+  q.topic=cleanMd(card.querySelector('[data-rq-topic]')?.value||q.topic||'Chưa phân loại')||'Chưa phân loại';
+  q.opts=[...card.querySelectorAll('[data-rq-option]')].map(el=>cleanMd(el.value));
+  const selected=card.querySelector('[data-rq-answer]:checked');
+  q.correctDraft=selected?Number(selected.value):null;
+  q.answerStatus='needs_review';
+  q.updatedAt=new Date().toISOString();
+  persist();
+  return true;
+}
+function promoteReview(index,card){
+  const q=reviewQueue[index];
+  if(!q) return;
+  saveReviewDraft(index,card);
+  const text=normalizedReviewText(q), opts=normalizedReviewOpts(q), correct=Number.isInteger(q.correctDraft)?q.correctDraft:null;
+  if(!text){alert('Stem đang trống.');return;}
+  if(opts.length<2||opts.length>6||opts.some(x=>!x)){
+    alert('Cần từ 2 đến 6 lựa chọn và không được để option trống.');
+    return;
+  }
+  if(!Number.isInteger(correct)||correct<0||correct>=opts.length){
+    alert('Hãy chọn đáp án đúng trước khi đưa câu vào Question Bank.');
+    return;
+  }
+  const item={
+    ...q,
+    id:q.id||uid(),
+    text,stem:text,opts,correct,
+    answerStatus:'user_verified',
+    review:{status:'user_verified',answer_basis:'user_review',confidence:'high',reviewed_at:new Date().toISOString()},
+    detection:{...(q.detection||{}),status:'ready',basis:'user_review',confidence:1,evidence:'User xác nhận trong Review Queue.'}
   };
-
-  function normalizedReviewText(q){return cleanMd(q.text||q.stem||q.sample||'');}
-  function normalizedReviewOpts(q){if(Array.isArray(q.opts))return q.opts.map(x=>cleanMd(x));if(Array.isArray(q.options))return q.options.map(x=>cleanMd(x&&typeof x==='object'?x.text:x));return [];}
-  function saveReviewDraft(index,card){
-    const q=reviewQueue[index];if(!q||!card)return false;
-    q.text=cleanMd(card.querySelector('[data-rq-stem]')?.value||q.text||q.stem||q.sample||'');q.stem=q.text;
-    q.topic=cleanMd(card.querySelector('[data-rq-topic]')?.value||q.topic||'Chưa phân loại')||'Chưa phân loại';
-    q.opts=[...card.querySelectorAll('[data-rq-option]')].map(el=>cleanMd(el.value));
-    const selected=card.querySelector('[data-rq-answer]:checked');q.correctDraft=selected?Number(selected.value):null;
-    q.answerStatus='needs_review';q.updatedAt=new Date().toISOString();persist();return true;
+  delete item.correctDraft;
+  delete item.options;
+  const fp=fingerprint(item);
+  if(questions.some(existing=>fingerprint(existing)===fp)){
+    alert('Câu này đã tồn tại trong Question Bank. Review item sẽ được bỏ khỏi queue để tránh trùng.');
+    reviewQueue.splice(index,1);
+    persist();refreshAll();return;
   }
-  function promoteReview(index,card){
-    const q=reviewQueue[index];if(!q)return;saveReviewDraft(index,card);
-    const text=normalizedReviewText(q),opts=normalizedReviewOpts(q),correct=Number(q.correctDraft);
-    if(!text){alert('Stem đang trống.');return;}
-    if(opts.length<2||opts.length>6||opts.some(x=>!x)){alert('Cần từ 2 đến 6 lựa chọn và không được để option trống.');return;}
-    if(!Number.isInteger(correct)||correct<0||correct>=opts.length){alert('Hãy chọn đáp án đúng trước khi lưu vào Question Bank.');return;}
-    const item={...q,id:q.id||uid(),text,stem:text,opts,correct,answerStatus:'user_verified',review:{status:'user_verified',answer_basis:'user_review',confidence:'high',reviewed_at:new Date().toISOString()},detection:{...(q.detection||{}),status:'ready',basis:'user_review',confidence:1,evidence:'User xác nhận trong Review Queue.'}};delete item.correctDraft;
-    const fp=fingerprint(item);
-    if(questions.some(existing=>fingerprint(existing)===fp)){alert('Câu này đã tồn tại trong Question Bank. Review item sẽ được bỏ khỏi queue để tránh trùng.');reviewQueue.splice(index,1);persist();refreshAll();return;}
-    questions.push(item);
-    if(item.topic&&!topicRegistry.some(t=>t.name===item.topic))topicRegistry.push({id:slugTopicId(item.topic),name:item.topic,createdAt:new Date().toISOString(),source:'review'});
-    reviewQueue.splice(index,1);persist();refreshAll();renderReviewTab();
+  questions.push(item);
+  if(item.topic&&!topicRegistry.some(t=>t.name===item.topic)){
+    topicRegistry.push({id:slugTopicId(item.topic),name:item.topic,createdAt:new Date().toISOString(),source:'review'});
   }
+  reviewQueue.splice(index,1);
+  const maxPage=Math.max(1,Math.ceil(reviewQueue.length/REVIEW_QUEUE_PAGE_SIZE));
+  reviewQueuePage=Math.min(reviewQueuePage,maxPage);
+  persist();refreshAll();renderReviewTab();
+}
+function renderReviewTab(){
+  const count=document.getElementById('reviewTabCount');
+  const host=document.getElementById('reviewTabList');
+  if(count) count.textContent=`${reviewQueue.length} câu`;
+  if(!host) return;
+  if(!reviewQueue.length){host.innerHTML='<div class="empty">Review Queue đang trống.</div>';return;}
 
-  window.renderReviewTab=function(){
-    const count=document.getElementById('reviewTabCount'),host=document.getElementById('reviewTabList');
-    if(count)count.textContent=reviewQueue.length+' câu';if(!host)return;
-    if(!reviewQueue.length){host.innerHTML='<div class="empty">Review Queue đang trống.</div>';return;}
-    host.innerHTML=reviewQueue.map((q,i)=>{
-      const text=normalizedReviewText(q),opts=normalizedReviewOpts(q);
-      const draft=Number.isInteger(q.correctDraft)?q.correctDraft:(Number.isInteger(q.correct)?q.correct:null);
-      const page=q.sourceMeta?.page||q.source?.page||null,qno=q.sourceMeta?.question_no||q.source?.question_no||q.sourceOrder||null;
-      return '<div class="review-edit-card" data-rq-card="'+i+'">'+
-        '<div class="review-edit-head"><div class="review-source-line"><span class="badge warn">Needs Review</span>'+(page?'<span class="badge">Trang '+escapeHtml(page)+'</span>':'')+(qno?'<span class="badge">Câu '+escapeHtml(qno)+'</span>':'')+'<span class="badge">'+escapeHtml(q.topic||'Chưa phân loại')+'</span></div><button class="danger" data-rq-delete="'+i+'">Bỏ câu</button></div>'+
-        '<div class="field"><label>Stem</label><textarea data-rq-stem>'+escapeHtml(text)+'</textarea></div>'+
-        '<div class="review-edit-options">'+opts.map((opt,oi)=>'<div class="review-edit-option"><input type="radio" name="rq-answer-'+i+'" value="'+oi+'" data-rq-answer '+(draft===oi?'checked':'')+'><input type="text" data-rq-option value="'+escapeHtml(opt)+'"><button class="danger remove-option" data-rq-remove-option="'+oi+'">×</button></div>').join('')+'</div>'+
-        '<div class="review-edit-actions"><button data-rq-add-option="'+i+'">+ Thêm lựa chọn</button></div>'+
-        '<div class="field" style="margin-top:10px"><label>Topic</label><input data-rq-topic value="'+escapeHtml(q.topic||'Chưa phân loại')+'"></div>'+
-        '<div class="small" style="margin-top:8px">'+escapeHtml(q.detection?.evidence||q.answerStatus||'Câu chưa có đáp án đủ chắc chắn.')+'</div>'+
-        '<div class="review-edit-actions"><button data-rq-save="'+i+'">Lưu nháp</button><button class="success" data-rq-promote="'+i+'">Xác nhận → Question Bank</button></div></div>';
-    }).join('');
+  const pages=Math.max(1,Math.ceil(reviewQueue.length/REVIEW_QUEUE_PAGE_SIZE));
+  reviewQueuePage=Math.max(1,Math.min(reviewQueuePage,pages));
+  const from=(reviewQueuePage-1)*REVIEW_QUEUE_PAGE_SIZE;
+  const rows=reviewQueue.slice(from,from+REVIEW_QUEUE_PAGE_SIZE);
 
-    host.querySelectorAll('[data-rq-save]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.rqSave),card=host.querySelector('[data-rq-card="'+i+'"]');saveReviewDraft(i,card);alert('Đã lưu chỉnh sửa trong Review Queue.');});
-    host.querySelectorAll('[data-rq-promote]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.rqPromote),card=host.querySelector('[data-rq-card="'+i+'"]');promoteReview(i,card);});
-    host.querySelectorAll('[data-rq-delete]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.rqDelete);if(confirm('Bỏ câu này khỏi Review Queue?')){reviewQueue.splice(i,1);persist();refreshAll();renderReviewTab();}});
-    host.querySelectorAll('[data-rq-add-option]').forEach(btn=>btn.onclick=()=>{const i=Number(btn.dataset.rqAddOption),card=host.querySelector('[data-rq-card="'+i+'"]');saveReviewDraft(i,card);reviewQueue[i].opts=normalizedReviewOpts(reviewQueue[i]);if(reviewQueue[i].opts.length>=6){alert('Tối đa 6 lựa chọn.');return;}reviewQueue[i].opts.push('');reviewQueue[i].correctDraft=null;persist();renderReviewTab();});
-    host.querySelectorAll('[data-rq-remove-option]').forEach(btn=>btn.onclick=()=>{const card=btn.closest('[data-rq-card]'),i=Number(card.dataset.rqCard),oi=Number(btn.dataset.rqRemoveOption);saveReviewDraft(i,card);reviewQueue[i].opts.splice(oi,1);reviewQueue[i].correctDraft=null;persist();renderReviewTab();});
+  host.innerHTML=`<div class="review-pager"><span class="small">Hiển thị ${from+1}–${Math.min(from+rows.length,reviewQueue.length)} / ${reviewQueue.length}</span><div class="toolbar"><button id="rqPrev" ${reviewQueuePage<=1?'disabled':''}>← Trước</button><span class="small">Trang ${reviewQueuePage}/${pages}</span><button id="rqNext" ${reviewQueuePage>=pages?'disabled':''}>Sau →</button></div></div>`+
+  rows.map((q,localIndex)=>{
+    const i=from+localIndex;
+    const text=normalizedReviewText(q), opts=normalizedReviewOpts(q);
+    const draft=Number.isInteger(q.correctDraft)?q.correctDraft:(Number.isInteger(q.correct)?q.correct:null);
+    const page=q.sourceMeta?.page||q.source?.page||null;
+    const qno=q.sourceMeta?.question_no||q.source?.question_no||q.sourceOrder||null;
+    const reason=q.detection?.evidence||q.detail||q.answerStatus||'Parser chưa xác định được cấu trúc/đáp án đủ chắc chắn.';
+    return `<div class="review-edit-card" data-rq-card="${i}">
+      <div class="review-edit-head">
+        <div class="review-source-line"><span class="badge warn">Needs Review</span>${page?`<span class="badge">Trang ${escapeHtml(page)}</span>`:''}${qno?`<span class="badge">Câu ${escapeHtml(qno)}</span>`:''}<span class="badge">${escapeHtml(q.topic||'Chưa phân loại')}</span></div>
+        <button class="danger" data-rq-delete="${i}">Bỏ câu</button>
+      </div>
+      <div class="field"><label>Stem</label><textarea data-rq-stem>${escapeHtml(text)}</textarea></div>
+      <div class="review-edit-options">${opts.map((opt,oi)=>`<div class="review-edit-option"><input type="radio" name="rq-answer-${i}" value="${oi}" data-rq-answer ${draft===oi?'checked':''}><input type="text" data-rq-option value="${escapeHtml(opt)}"><button class="danger remove-option" data-rq-remove-option="${oi}" title="Xóa lựa chọn">×</button></div>`).join('')}</div>
+      <div class="review-edit-actions"><button data-rq-add-option="${i}">+ Thêm lựa chọn</button></div>
+      <div class="field" style="margin-top:10px"><label>Topic</label><input data-rq-topic value="${escapeHtml(q.topic||'Chưa phân loại')}"></div>
+      <div class="small" style="margin-top:8px">${escapeHtml(reason)}</div>
+      <div class="review-edit-actions"><button data-rq-save="${i}">Lưu nháp</button><button class="success" data-rq-promote="${i}">Xác nhận → Question Bank</button></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('rqPrev')?.addEventListener('click',()=>{reviewQueuePage--;renderReviewTab();});
+  document.getElementById('rqNext')?.addEventListener('click',()=>{reviewQueuePage++;renderReviewTab();});
+  host.querySelectorAll('[data-rq-save]').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.rqSave),card=host.querySelector(`[data-rq-card="${i}"]`);
+    saveReviewDraft(i,card);alert('Đã lưu chỉnh sửa trong Review Queue.');
+  });
+  host.querySelectorAll('[data-rq-promote]').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.rqPromote),card=host.querySelector(`[data-rq-card="${i}"]`);
+    promoteReview(i,card);
+  });
+  host.querySelectorAll('[data-rq-delete]').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.rqDelete);
+    if(confirm('Bỏ câu này khỏi Review Queue?')){reviewQueue.splice(i,1);persist();renderReviewQueueSummary();renderReviewTab();}
+  });
+  host.querySelectorAll('[data-rq-add-option]').forEach(btn=>btn.onclick=()=>{
+    const i=Number(btn.dataset.rqAddOption),card=host.querySelector(`[data-rq-card="${i}"]`);
+    saveReviewDraft(i,card);
+    const q=reviewQueue[i],opts=normalizedReviewOpts(q);
+    if(opts.length>=6){alert('Single-choice hỗ trợ tối đa 6 lựa chọn.');return;}
+    q.opts=[...opts,''];persist();renderReviewTab();
+  });
+  host.querySelectorAll('[data-rq-remove-option]').forEach(btn=>btn.onclick=()=>{
+    const card=btn.closest('[data-rq-card]'),i=Number(card.dataset.rqCard),oi=Number(btn.dataset.rqRemoveOption);
+    saveReviewDraft(i,card);
+    const q=reviewQueue[i],opts=normalizedReviewOpts(q);
+    opts.splice(oi,1);q.opts=opts;q.correctDraft=null;persist();renderReviewTab();
+  });
+}
+function flashP(id){
+  return flashProgress[id]||{attempts:0,known:0,again:0,lastKnown:null,lastAt:null};
+}
+function getFlashPool(){
+  const topic=document.getElementById('flashTopic')?.value||'__all__';
+  const mode=document.getElementById('flashMode')?.value||'all';
+  let pool=questions.filter(q=>topic==='__all__'||(q.topic||'Chưa phân loại')===topic);
+  if(mode==='unseen') pool=pool.filter(q=>(flashP(q.id).attempts||0)===0);
+  if(mode==='again') pool=pool.filter(q=>flashP(q.id).lastKnown===false);
+  if(mode==='wrong') pool=pool.filter(q=>getP(q.id).lastCorrect===false);
+  return pool;
+}
+function startFlashcards(){
+  let pool=getFlashPool().map(q=>q.id);
+  if(!pool.length){alert('Không có thẻ phù hợp với bộ lọc.');return}
+  if(document.getElementById('flashShuffle')?.checked) pool=shuffle(pool);
+  flashSession={queue:pool,current:0,flipped:false,known:0,again:0};
+  renderFlashcards();
+}
+function currentFlashQuestion(){
+  if(!flashSession) return null;
+  return questions.find(q=>q.id===flashSession.queue[flashSession.current])||null;
+}
+function flipFlash(){
+  if(!flashSession) return;
+  flashSession.flipped=!flashSession.flipped;
+  const el=document.querySelector('#flashCardStage .flashcard');
+  if(el) el.classList.toggle('flipped',flashSession.flipped);
+}
+function moveFlash(delta){
+  if(!flashSession) return;
+  flashSession.current=Math.max(0,Math.min(flashSession.queue.length-1,flashSession.current+delta));
+  flashSession.flipped=false;
+  renderFlashcards();
+}
+function rateFlash(known){
+  const q=currentFlashQuestion();
+  if(!q||!flashSession) return;
+  const p=flashP(q.id);
+  p.attempts=(p.attempts||0)+1;
+  p.known=(p.known||0)+(known?1:0);
+  p.again=(p.again||0)+(known?0:1);
+  p.lastKnown=known;
+  p.lastAt=new Date().toISOString();
+  flashProgress[q.id]=p;
+  if(known) flashSession.known++; else flashSession.again++;
+  persistFlash();
+  if(flashSession.current<flashSession.queue.length-1) flashSession.current++;
+  flashSession.flipped=false;
+  renderFlashcards();
+  renderDashboard();
+}
+function renderFlashcards(){
+  const stage=document.getElementById('flashCardStage');
+  if(!stage) return;
+  const q=currentFlashQuestion();
+  const total=flashSession?.queue.length||0;
+  const idx=flashSession?flashSession.current+1:0;
+  const counter=document.getElementById('flashCounter');
+  const knownEl=document.getElementById('flashKnownCount');
+  const againEl=document.getElementById('flashAgainCount');
+  const bar=document.getElementById('flashProgressBar');
+  if(counter) counter.textContent=`${idx}/${total}`;
+  if(knownEl) knownEl.textContent=flashSession?.known||0;
+  if(againEl) againEl.textContent=flashSession?.again||0;
+  if(bar) bar.style.width=total?`${idx/total*100}%`:'0%';
+  if(!q){
+    stage.innerHTML='<div class="empty card" style="min-height:390px;display:grid;place-items:center">Chọn bộ thẻ rồi bấm “Bắt đầu Flashcards”.</div>';
+    return;
+  }
+  const answer=q.opts?.[q.correct]||'Không xác định';
+  stage.innerHTML=`
+    <div class="flashcard ${flashSession.flipped?'flipped':''}" role="button" tabindex="0" aria-label="Lật flashcard">
+      <div class="flash-face front">
+        <span class="badge flash-label">${escapeHtml(q.topic||'Chưa phân loại')}</span>
+        <div class="flash-question">${escapeHtml(q.text)}</div>
+        <div class="flash-hint">Nhấn vào thẻ hoặc Space để lật</div>
+      </div>
+      <div class="flash-face back">
+        <span class="badge ok flash-label">Đáp án</span>
+        <div class="flash-answer">${String.fromCharCode(65+q.correct)}. ${escapeHtml(answer)}</div>
+        ${q.explanation?`<div class="muted" style="margin-top:16px;max-width:800px">${escapeHtml(q.explanation)}</div>`:''}
+        <div class="flash-hint">Tự đánh giá trước khi chuyển sang thẻ tiếp theo</div>
+      </div>
+    </div>`;
+  stage.querySelector('.flashcard')?.addEventListener('click',flipFlash);
+}
+document.getElementById('startFlashBtn').onclick=startFlashcards;
+document.getElementById('flashFlipBtn').onclick=flipFlash;
+document.getElementById('flashPrevBtn').onclick=()=>moveFlash(-1);
+document.getElementById('flashNextBtn').onclick=()=>moveFlash(1);
+document.getElementById('flashKnownBtn').onclick=()=>rateFlash(true);
+document.getElementById('flashAgainBtn').onclick=()=>rateFlash(false);
+
+document.getElementById('dashStartQuiz').onclick=()=>showTab('quiz');
+document.getElementById('dashFlashcards').onclick=()=>showTab('flashcards');
+document.getElementById('dashWrong').onclick=()=>{
+  showTab('quiz');
+  document.getElementById('quizMode').value='wrong';
+};
+document.getElementById('dashOpenWrong').onclick=()=>{
+  showTab('quiz');
+  document.getElementById('quizMode').value='wrong';
+};
+document.getElementById('dashOpenProgress').onclick=()=>showTab('progressTab');
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('flashcards')?.classList.contains('active')) return;
+  if(e.code==='Space'){e.preventDefault();flipFlash();}
+  if(e.key==='ArrowLeft') moveFlash(-1);
+  if(e.key==='ArrowRight') moveFlash(1);
+});
+
+const GAME_BEST_KEY='quizAppV4.personalBests';
+let quizTimerHandle=null;
+
+function gameBestMap(){return loadJson(GAME_BEST_KEY,{});}
+function saveGameBest(key,score){
+  const map=gameBestMap();
+  const prev=map[key]||0;
+  if(score>prev){
+    map[key]=score;
+    localStorage.setItem(GAME_BEST_KEY,JSON.stringify(map));
+    return {isBest:true,previous:prev};
+  }
+  return {isBest:false,previous:prev};
+}
+function clearQuizTimer(){
+  if(quizTimerHandle){clearInterval(quizTimerHandle);quizTimerHandle=null;}
+}
+function gameModeEnabled(){return document.getElementById('playStyle')?.value==='challenge';}
+function gameScopeKey(){
+  const topic=document.getElementById('quizTopic')?.value||'__all__';
+  const mode=document.getElementById('quizMode')?.value||'all';
+  return `${topic}::${mode}`;
+}
+function startQuestionTimer(){
+  clearQuizTimer();
+  if(!session || !gameModeEnabled() || session.answered) return;
+  const limit=Number(document.getElementById('questionTimer')?.value||0);
+  if(!limit) return;
+  session.timeLimit=limit;
+  session.timeLeft=limit;
+  updateTimerUi();
+  quizTimerHandle=setInterval(()=>{
+    if(!session || session.answered){clearQuizTimer();return}
+    session.timeLeft=Math.max(0,session.timeLeft-0.25);
+    updateTimerUi();
+    if(session.timeLeft<=0){
+      clearQuizTimer();
+      answerQuestion(-1,true);
+    }
+  },250);
+}
+function updateTimerUi(){
+  const label=document.getElementById('gameTime');
+  const bar=document.getElementById('timerFill');
+  if(!session || !label || !bar) return;
+  const limit=session.timeLimit||0;
+  const left=Math.max(0,session.timeLeft||0);
+  label.textContent=limit?`${left.toFixed(left<10?1:0)}s`:'—';
+  bar.style.width=limit?`${Math.max(0,Math.min(100,left/limit*100))}%`:'100%';
+}
+function usePowerup(type){
+  if(!session || !gameModeEnabled() || session.answered) return;
+  session.powerups=session.powerups||{freeze:false,fifty:false};
+  if(session.powerups[type]) return;
+
+  if(type==='freeze'){
+    const limit=Number(document.getElementById('questionTimer')?.value||0);
+    if(!limit){alert('Timer đang tắt.');return}
+    session.timeLeft=Math.min((session.timeLimit||limit)+10,(session.timeLeft||0)+10);
+    session.timeLimit=Math.max(session.timeLimit||limit,session.timeLeft);
+    session.powerups.freeze=true;
+    updateTimerUi();
+  }else if(type==='fifty'){
+    const q=currentQuestion();
+    const wrong=q.opts.map((_,i)=>i).filter(i=>i!==q.correct && i!==session.selected);
+    const hide=shuffle(wrong).slice(0,Math.max(1,Math.floor(wrong.length/2)));
+    hide.forEach(i=>{
+      const el=document.querySelector(`[data-answer="${i}"]`);
+      if(el){el.style.opacity='.2';el.style.pointerEvents='none';}
+    });
+    session.powerups.fifty=true;
+  }
+  renderPowerupsState();
+}
+function renderPowerupsState(){
+  if(!session) return;
+  ['freeze','fifty'].forEach(type=>{
+    const btn=document.querySelector(`[data-powerup="${type}"]`);
+    if(btn) btn.classList.toggle('used',!!session.powerups?.[type]);
+  });
+}
+
+function getQuizPool(){
+  const topic=document.getElementById('quizTopic').value;
+  const mode=document.getElementById('quizMode').value;
+  let pool=questions.filter(q=>topic==='__all__' || (q.topic||'Chưa phân loại')===topic);
+  if(mode==='unseen') pool=pool.filter(q=>(getP(q.id).attempts||0)===0);
+  if(mode==='wrong') pool=pool.filter(q=>getP(q.id).lastCorrect===false);
+  return pool;
+}
+function startQuizWithIds(ids){
+  if(!ids.length){ alert('Không có câu hỏi phù hợp với phạm vi đã chọn.'); return; }
+  const queue=document.getElementById('shuffleQuiz').checked ? shuffle(ids) : [...ids];
+  session={
+    queue,current:0,answered:false,selected:null,correct:0,wrong:0,wrongIds:[],
+    score:0,streak:0,maxStreak:0,powerups:{freeze:false,fifty:false},
+    timeLimit:0,timeLeft:0,scopeKey:gameScopeKey()
   };
+  renderQuestion();
+}
+function startQuiz(){
+  startQuizWithIds(getQuizPool().map(q=>q.id));
+}
+function startWrong(){
+  const topic=document.getElementById('quizTopic').value;
+  let pool=questions.filter(q=>getP(q.id).lastCorrect===false);
+  if(topic!=='__all__') pool=pool.filter(q=>(q.topic||'Chưa phân loại')===topic);
+  startQuizWithIds(pool.map(q=>q.id));
+}
+function currentQuestion(){ return session ? questions.find(q=>q.id===session.queue[session.current]) : null; }
 
-  if(typeof renderImportPreview==='function'){
-    const originalRenderImportPreview=renderImportPreview;
-    window.renderImportPreview=function(){
-      originalRenderImportPreview();const b=importBuffer||{valid:[],review:[],invalid:[]};
-      const commit=document.getElementById('commitImportBtn');if(commit)commit.disabled=!((b.valid||[]).length||(b.review||[]).length||(b.invalid||[]).length);
-      const warn=document.getElementById('importWarning');if(warn&&warn.innerHTML)warn.innerHTML=warn.innerHTML.replace(/Commit đang bị khóa[^<.]*/g,'Các câu này sẽ được lưu vào Review Queue để user tự sửa sau');
-      const badge=document.getElementById('importStageBadge');if(badge&&(b.review||[]).length)badge.textContent=(b.valid||[]).length+' Ready · '+b.review.length+' Review';
-    };
+function renderQuestion(){
+  renderGlobalStats();
+  clearQuizTimer();
+  const card=document.getElementById('quizCard');
+  if(!session){ card.innerHTML='<div class="empty">Chọn phạm vi rồi bấm “Bắt đầu”.</div>'; return; }
+  if(session.current>=session.queue.length){
+    const total=session.queue.length, rate=total?Math.round(session.correct/total*100):0;
+    const challenge=gameModeEnabled();
+    const best=challenge?saveGameBest(session.scopeKey,session.score):{isBest:false,previous:0};
+    card.innerHTML=`
+      <span class="badge ok">Hoàn thành phiên</span>
+      <h2 style="margin-top:10px">Kết quả ${session.correct}/${total} · ${rate}%</h2>
+      ${challenge?`
+      <div class="game-strip">
+        <div class="game-metric"><span>Điểm</span><b>${session.score}</b></div>
+        <div class="game-metric"><span>Max streak</span><b>${session.maxStreak}</b></div>
+        <div class="game-metric"><span>Best trước đó</span><b>${best.previous||0}</b></div>
+        <div class="game-metric"><span>Kỷ lục mới</span><b>${best.isBest?'Có':'—'}</b></div>
+      </div>`:''}
+      <p class="muted">Sai trong phiên: <b>${session.wrongIds.length}</b>. Câu sửa đúng sẽ tự rời khỏi pool câu sai.</p>
+      <div class="toolbar">
+        ${session.wrongIds.length?'<button class="primary" id="retrySessionWrong">Redemption — làm lại câu sai</button>':''}
+        <button id="newSessionBtn">Phiên mới</button>
+      </div>`;
+    const retry=document.getElementById('retrySessionWrong');
+    if(retry) retry.onclick=()=>startQuizWithIds([...new Set(session.wrongIds)]);
+    document.getElementById('newSessionBtn').onclick=()=>{session=null;renderQuestion();};
+    return;
+  }
+  const q=currentQuestion();
+  if(!q){ session.current++; renderQuestion(); return; }
+  const p=getP(q.id);
+  const challenge=gameModeEnabled();
+  card.innerHTML=`
+    <div class="toolbar" style="justify-content:space-between">
+      <span class="badge">${escapeHtml(q.topic||'Chưa phân loại')}</span>
+      <span class="small">Câu ${session.current+1}/${session.queue.length} · Đã làm câu này ${p.attempts||0} lần</span>
+    </div>
+    ${challenge?`
+      <div class="game-strip">
+        <div class="game-metric"><span>Điểm</span><b id="gameScore">${session.score}</b></div>
+        <div class="game-metric"><span>Streak</span><b id="gameStreak">${session.streak}</b></div>
+        <div class="game-metric"><span>Thời gian</span><b id="gameTime">—</b></div>
+        <div class="game-metric"><span>Đúng / Sai</span><b>${session.correct}/${session.wrong}</b></div>
+      </div>
+      <div class="timer-bar"><div id="timerFill"></div></div>
+      <div class="powerups">
+        <button class="powerup" data-powerup="freeze">⏱ Time +10s</button>
+        <button class="powerup" data-powerup="fifty">½ 50/50</button>
+      </div>`:''}
+    <div class="question">${escapeHtml(q.text)}</div>
+    <div id="answers">
+      ${q.opts.map((o,i)=>`<div class="answer" data-answer="${i}"><b>${String.fromCharCode(65+i)}.</b> ${escapeHtml(o)}</div>`).join('')}
+    </div>
+    <div id="answerResult"></div>
+    <div class="toolbar" style="margin-top:16px;justify-content:flex-end">
+      <button id="nextQuestionBtn" disabled>Câu tiếp →</button>
+    </div>`;
+  document.querySelectorAll('[data-answer]').forEach(el=>el.addEventListener('click',()=>answerQuestion(Number(el.dataset.answer))));
+  document.querySelectorAll('[data-powerup]').forEach(el=>el.addEventListener('click',()=>usePowerup(el.dataset.powerup)));
+  document.getElementById('nextQuestionBtn').onclick=nextQuestion;
+  renderPowerupsState();
+  startQuestionTimer();
+}
+function answerQuestion(i, timedOut=false){
+  if(!session || session.answered) return;
+  const q=currentQuestion();
+  if(!q) return;
+  if(!timedOut && (i<0 || i>=q.opts.length)) return;
+
+  clearQuizTimer();
+  session.answered=true;
+  session.selected=timedOut?null:i;
+  const ok=!timedOut && i===q.correct;
+
+  if(ok){
+    session.correct++;
+    session.streak++;
+    session.maxStreak=Math.max(session.maxStreak,session.streak);
+  }else{
+    session.wrong++;
+    session.streak=0;
+    session.wrongIds.push(q.id);
   }
 
-  const commitBtn=document.getElementById('commitImportBtn');
-  if(commitBtn)commitBtn.onclick=function(){
-    const ready=[...(importBuffer.valid||[])],unresolved=[...(importBuffer.review||[])];
-    if(!ready.length&&!unresolved.length&&!(importBuffer.invalid||[]).length)return;
-    let removed=0;
-    if(importBuffer.mode==='replace'&&importBuffer.datasetId){const old=questions.filter(q=>q.datasetId===importBuffer.datasetId);removed=old.length;const oldIds=new Set(old.map(q=>q.id));questions=questions.filter(q=>q.datasetId!==importBuffer.datasetId);oldIds.forEach(id=>delete progress[id]);reviewQueue=reviewQueue.filter(q=>q.datasetId!==importBuffer.datasetId);if(session&&session.queue?.some(id=>oldIds.has(id)))session=null;}
-    questions.push(...ready);
-    unresolved.forEach(q=>reviewQueue.push({...q,correct:null,answerStatus:q.answerStatus||'needs_review',queuedAt:new Date().toISOString(),review:{status:'needs_review',answer_basis:'user_review_required',confidence:'unresolved'}}));
-    (importBuffer.invalid||[]).forEach((b,i)=>reviewQueue.push({id:uid(),text:cleanMd(b.sample||b.detail||''),stem:cleanMd(b.sample||b.detail||''),opts:[],correct:null,correctDraft:null,topic:'Chưa phân loại',datasetId:importBuffer.datasetId||null,datasetTitle:importBuffer.datasetTitle||null,importFileName:importBuffer.fileName||null,source:'broken-import',sourceMeta:{file:importBuffer.fileName||null,page:b.page||null,question_no:b.no||null},answerStatus:'needs_manual_repair',queuedAt:new Date().toISOString(),detection:detection('needs_review','broken_import',0,b.detail||'Parser không tách được câu. User cần sửa thủ công.',[b.reason||'BROKEN_STRUCTURE'])}));
-    [...ready,...unresolved].forEach(q=>{const name=cleanMd(q.topic||'');if(name&&!topicRegistry.some(t=>t.name===name))topicRegistry.push({id:slugTopicId(name),name,createdAt:new Date().toISOString(),source:q.correct==null?'review':'import'});});
-    const imported=ready.length,queued=unresolved.length+(importBuffer.invalid||[]).length,duplicates=importBuffer.duplicate||0;
-    importBuffer=blankImportBuffer();importReviewPage=1;persist();renderImportPreview();refreshAll();renderQuestion();
-    alert('Import hoàn tất: '+imported+' câu vào Question Bank · '+queued+' câu vào Review Queue · '+duplicates+' Trùng.'+(removed?' Đã thay thế '+removed+' câu cũ.':''));
+  let earned=0;
+  if(gameModeEnabled()){
+    if(ok){
+      const limit=session.timeLimit||0;
+      const speedRatio=limit?Math.max(0,Math.min(1,(session.timeLeft||0)/limit)):1;
+      const speedBonus=Math.round(500*speedRatio);
+      const streakBonus=Math.min(500,Math.max(0,(session.streak-1)*100));
+      earned=500+speedBonus+streakBonus;
+      session.score+=earned;
+    }
+  }
+
+  const p=getP(q.id);
+  p.attempts=(p.attempts||0)+1;
+  p.correct=(p.correct||0)+(ok?1:0);
+  p.wrong=(p.wrong||0)+(ok?0:1);
+  p.lastCorrect=ok;
+  p.lastAnsweredAt=new Date().toISOString();
+  p.lastSelected=timedOut?null:i;
+  progress[q.id]=p;
+  persist();
+
+  document.querySelectorAll('[data-answer]').forEach(el=>{
+    const idx=Number(el.dataset.answer);
+    el.classList.add('disabled');
+    if(idx===q.correct) el.classList.add('correct');
+    if(!timedOut && idx===i && !ok) el.classList.add('wrong');
+  });
+
+  const timeoutText=timedOut?'Hết giờ. ': '';
+  const scoreText=gameModeEnabled() && ok?` <b>+${earned} điểm</b>`:'';
+  const streakText=gameModeEnabled() && ok && session.streak>1?` · streak ${session.streak}`:'';
+
+  document.getElementById('answerResult').innerHTML=`
+    <div class="result">
+      <b>${timeoutText}${ok?'Chính xác.':'Chưa đúng.'}</b>${scoreText}${streakText}
+      ${q.explanation?`<div style="margin-top:8px"><b>Giải thích:</b> ${escapeHtml(q.explanation)}</div>`:''}
+    </div>`;
+
+  const scoreEl=document.getElementById('gameScore');
+  const streakEl=document.getElementById('gameStreak');
+  if(scoreEl) scoreEl.textContent=session.score;
+  if(streakEl) streakEl.textContent=session.streak;
+
+  document.getElementById('nextQuestionBtn').disabled=false;
+  renderGlobalStats();
+}
+function nextQuestion(){
+  if(!session || !session.answered) return;
+  session.current++; session.answered=false; session.selected=null; renderQuestion();
+}
+document.getElementById('startQuizBtn').onclick=startQuiz;
+document.getElementById('quickWrongBtn').onclick=startWrong;
+
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('quiz').classList.contains('active') || !session) return;
+  const k=e.key.toUpperCase();
+  if(!session.answered && 'ABCDEF'.includes(k)){
+    const idx='ABCDEF'.indexOf(k), q=currentQuestion();
+    if(q && idx<q.opts.length) answerQuestion(idx);
+  } else if(session.answered && e.key==='Enter') nextQuestion();
+});
+
+/* Editor */
+function openEditor(q=null){
+  editId=q?.id || null;
+  document.getElementById('editorTitle').textContent=q?'Sửa câu hỏi':'Thêm câu hỏi';
+  document.getElementById('editTopic').value=q?.topic || 'Chưa phân loại';
+  document.getElementById('editText').value=q?.text || '';
+  document.getElementById('editExplanation').value=q?.explanation || '';
+  renderEditOptions(q?.opts || ['','','',''], Number.isInteger(q?.correct)?q.correct:0);
+  document.getElementById('editorModal').classList.add('open');
+}
+function closeEditor(){ document.getElementById('editorModal').classList.remove('open'); }
+function renderEditOptions(opts, correct){
+  const box=document.getElementById('editOptions');
+  box.innerHTML=opts.map((o,i)=>`
+    <div class="option-edit">
+      <input type="radio" name="correctOpt" value="${i}" ${i===correct?'checked':''} title="Đáp án đúng">
+      <input class="edit-opt-input" value="${escapeHtml(o)}" placeholder="Lựa chọn ${String.fromCharCode(65+i)}">
+      <button type="button" data-remove-opt="${i}" ${opts.length<=2?'disabled':''}>×</button>
+    </div>`).join('');
+  box.querySelectorAll('[data-remove-opt]').forEach(btn=>btn.onclick=()=>{
+    const current=[...document.querySelectorAll('.edit-opt-input')].map(x=>x.value);
+    let c=Number(document.querySelector('input[name="correctOpt"]:checked')?.value||0);
+    const idx=Number(btn.dataset.removeOpt);
+    current.splice(idx,1);
+    if(c===idx)c=0; else if(c>idx)c--;
+    renderEditOptions(current,c);
+  });
+}
+document.getElementById('addOptionBtn').onclick=()=>{
+  const opts=[...document.querySelectorAll('.edit-opt-input')].map(x=>x.value);
+  if(opts.length>=6){alert('Tối đa 6 lựa chọn.');return}
+  const c=Number(document.querySelector('input[name="correctOpt"]:checked')?.value||0);
+  opts.push(''); renderEditOptions(opts,c);
+};
+function saveEditor(){
+  const text=document.getElementById('editText').value.trim();
+  const topic=document.getElementById('editTopic').value.trim() || 'Chưa phân loại';
+  const explanation=document.getElementById('editExplanation').value.trim();
+  const opts=[...document.querySelectorAll('.edit-opt-input')].map(x=>x.value.trim());
+  const correct=Number(document.querySelector('input[name="correctOpt"]:checked')?.value);
+  if(!text || opts.length<2 || opts.some(x=>!x)){alert('Cần câu hỏi và ít nhất 2 lựa chọn không rỗng.');return}
+  if(!Number.isInteger(correct) || correct<0 || correct>=opts.length){alert('Hãy chọn đáp án đúng.');return}
+  if(editId){
+    const idx=questions.findIndex(q=>q.id===editId);
+    if(idx>=0) questions[idx]={...questions[idx],text,topic,explanation,opts,correct,updatedAt:new Date().toISOString()};
+  }else{
+    questions.push({id:uid(),text,topic,explanation,opts,correct,source:'manual',createdAt:new Date().toISOString()});
+  }
+  if(topic && !topicRegistry.some(t=>t.name===topic)){
+    topicRegistry.push({id:slugTopicId(topic),name:topic,createdAt:new Date().toISOString(),source:'manual'});
+  }
+  persist(); closeEditor(); refreshAll();
+}
+document.getElementById('newTopicBtn').onclick=openTopicModal;
+document.getElementById('newTopicBtnSecondary').onclick=openTopicModal;
+document.getElementById('closeTopicModalBtn').onclick=closeTopicModal;
+document.getElementById('cancelTopicBtn').onclick=closeTopicModal;
+document.getElementById('saveTopicBtn').onclick=saveTopic;
+document.getElementById('topicModal').addEventListener('click',e=>{if(e.target.id==='topicModal')closeTopicModal();});
+document.getElementById('newQuestionBtn').onclick=()=>openEditor();
+document.getElementById('closeEditorBtn').onclick=closeEditor;
+document.getElementById('cancelEditorBtn').onclick=closeEditor;
+document.getElementById('saveQuestionBtn').onclick=saveEditor;
+document.getElementById('editorModal').addEventListener('click',e=>{if(e.target.id==='editorModal')closeEditor();});
+
+/* Manage */
+function filteredQuestions(){
+  const term=normalizeKey(document.getElementById('searchQ').value);
+  const topic=document.getElementById('manageTopic').value;
+  const status=document.getElementById('manageStatus').value;
+  return questions.filter(q=>{
+    if(topic!=='__all__' && (q.topic||'Chưa phân loại')!==topic) return false;
+    if(term && !normalizeKey(q.text+' '+q.opts.join(' ')).includes(term)) return false;
+    const p=getP(q.id);
+    if(status==='unseen' && (p.attempts||0)>0) return false;
+    if(status==='correct' && p.lastCorrect!==true) return false;
+    if(status==='wrong' && p.lastCorrect!==false) return false;
+    return true;
+  });
+}
+function renderManage(){
+  const list=filteredQuestions();
+  const pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  managePage=Math.min(managePage,pages);
+  const start=(managePage-1)*PAGE_SIZE;
+  const page=list.slice(start,start+PAGE_SIZE);
+  document.getElementById('questionCountLabel').textContent=`${list.length} câu`;
+  document.getElementById('pageLabel').textContent=`Trang ${managePage}/${pages}`;
+  document.getElementById('prevPageBtn').disabled=managePage<=1;
+  document.getElementById('nextPageBtn').disabled=managePage>=pages;
+  document.getElementById('questionList').innerHTML=page.length?page.map((q,idx)=>{
+    const p=getP(q.id);
+    const status=p.attempts? (p.lastCorrect?'<span class="badge ok">Đang đúng</span>':'<span class="badge bad">Đang sai</span>'):'<span class="badge">Chưa làm</span>';
+    return `<div class="list-item">
+      <div class="item-title">${start+idx+1}. ${escapeHtml(q.text)}</div>
+      <div class="item-meta">
+        <span class="badge">${escapeHtml(q.topic||'Chưa phân loại')}</span>${status}
+        <span class="small">Đúng: ${String.fromCharCode(65+q.correct)} · ${escapeHtml(q.opts[q.correct]||'')}</span>
+        <span class="small">Lượt làm: ${p.attempts||0}</span>
+      </div>
+      <div class="toolbar">
+        <button data-edit="${q.id}">Sửa</button>
+        <button data-reset="${q.id}">Reset tiến độ câu</button>
+        <button class="danger" data-delete="${q.id}">Xóa</button>
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty">Không có câu hỏi phù hợp.</div>';
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEditor(questions.find(q=>q.id===b.dataset.edit)));
+  document.querySelectorAll('[data-reset]').forEach(b=>b.onclick=()=>{delete progress[b.dataset.reset];persist();refreshAll();});
+  document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>deleteQuestion(b.dataset.delete));
+}
+function deleteQuestion(id){
+  const q=questions.find(x=>x.id===id);
+  if(!q || !confirm('Xóa câu hỏi này?')) return;
+  questions=questions.filter(x=>x.id!==id); delete progress[id]; persist(); refreshAll();
+}
+['searchQ','manageTopic','manageStatus'].forEach(id=>document.getElementById(id).addEventListener(id==='searchQ'?'input':'change',()=>{managePage=1;renderManage();}));
+document.getElementById('prevPageBtn').onclick=()=>{if(managePage>1){managePage--;renderManage();}};
+document.getElementById('nextPageBtn').onclick=()=>{managePage++;renderManage();};
+document.getElementById('deleteAllBtn').onclick=()=>{
+  if(confirm('Xóa toàn bộ câu hỏi và tiến độ? Hành động này không hoàn tác được.')){
+    questions=[];progress={};flashProgress={};session=null;flashSession=null;persistFlash();persist();refreshAll();
+  }
+};
+document.getElementById('exportBtn').onclick=()=>{
+  const payload={version:2,exportedAt:new Date().toISOString(),questions,progress};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bo-cau-hoi-v2.json';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+
+
+function getImportedFileGroups(){
+  const map=new Map();
+
+  questions.forEach(q=>{
+    const key=q.datasetId
+      ? `dataset:${q.datasetId}`
+      : `file:${q.importFileName || q.sourceMeta?.file || 'unknown'}`;
+
+    if(!map.has(key)){
+      map.set(key,{
+        key,
+        datasetId:q.datasetId||null,
+        name:q.datasetTitle || q.importFileName || q.sourceMeta?.file || 'Dataset không rõ tên',
+        fileName:q.importFileName || q.sourceMeta?.file || null,
+        count:0,
+        ids:[]
+      });
+    }
+    const group=map.get(key);
+    group.count++;
+    group.ids.push(q.id);
+  });
+
+  return [...map.values()].sort((a,b)=>a.name.localeCompare(b.name,'vi'));
+}
+
+function refreshImportedFileSelector(){
+  const select=document.getElementById('importedFileSelect');
+  const button=document.getElementById('deleteImportedFileBtn');
+  if(!select || !button) return;
+
+  const groups=getImportedFileGroups();
+  const previous=select.value;
+
+  if(!groups.length){
+    select.innerHTML='<option value="">Chưa có file/dataset đã nhập</option>';
+    select.disabled=true;
+    button.disabled=true;
+    return;
+  }
+
+  select.disabled=false;
+  button.disabled=false;
+  select.innerHTML=groups.map(g=>
+    `<option value="${escapeHtml(g.key)}">${escapeHtml(g.name)} · ${g.count} câu${g.datasetId?` · ${escapeHtml(g.datasetId)}`:''}</option>`
+  ).join('');
+
+  if(groups.some(g=>g.key===previous)) select.value=previous;
+}
+
+function deleteImportedFile(){
+  const select=document.getElementById('importedFileSelect');
+  const key=select?.value;
+  if(!key) return;
+
+  const group=getImportedFileGroups().find(g=>g.key===key);
+  if(!group) return;
+
+  const ids=new Set(group.ids);
+  const confirmed=confirm(
+    `Xóa "${group.name}" khỏi app?\n\n` +
+    `Sẽ xóa ${group.count} câu hỏi và toàn bộ tiến độ gắn với các câu này.\n` +
+    `File vật lý trên máy tính không bị ảnh hưởng.`
+  );
+  if(!confirmed) return;
+
+  questions=questions.filter(q=>!ids.has(q.id));
+  ids.forEach(id=>delete progress[id]);
+
+  if(session && session.queue?.some(id=>ids.has(id))){
+    session=null;
+  }
+
+  persist();
+  refreshAll();
+  renderQuestion();
+  alert(`Đã xóa ${group.count} câu hỏi từ "${group.name}".`);
+}
+
+/* Parser */
+
+
+function collectTopicMarkers(text){
+  const markers=[];
+  const major=/(^|---\s*)([IVX]{1,6})\.\s*([A-ZÀ-Ỹ][A-ZÀ-Ỹ0-9 \-–/&]{2,45}?)(?=\s+(?:---|\*\*|Chào|Dựa|Câu|\d{1,4}\.))/g;
+  let m;
+  while((m=major.exec(text))){
+    const name=cleanMd(m[3]).replace(/\s+$/,'');
+    if(name && !/^NXB\b/i.test(name)) markers.push({pos:m.index,type:'major',name});
+  }
+  const sub=/\*\*(Phần\s+\d+\s*:[^*]{2,120})\*\*/gi;
+  while((m=sub.exec(text))) markers.push({pos:m.index,type:'sub',name:cleanMd(m[1])});
+  markers.sort((a,b)=>a.pos-b.pos);
+  return markers;
+}
+function topicAt(markers,pos){
+  let major='Chưa phân loại', sub='';
+  for(const mk of markers){
+    if(mk.pos>pos) break;
+    if(mk.type==='major'){ major=mk.name; sub=''; }
+    else if(mk.type==='sub') sub=mk.name;
+  }
+  return sub ? `${major} / ${sub}` : major;
+}
+
+function normalizeSourceText(s){
+  return String(s||'')
+    .replace(/\u00a0/g,' ')
+    .replace(/\u200b/g,' ')
+    .replace(/\r/g,'\n')
+    .replace(/[ \t]+/g,' ')
+    .replace(/\n+/g,' \n ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function blankImportBuffer(){
+  return {valid:[],review:[],invalid:[],detected:0,duplicate:0,expected:null,datasetId:null,datasetTitle:null,fileName:null,mode:'merge',schemaVersion:null};
+}
+function collectPageMarkers(text){
+  const out=[]; const re=/\[\[MEDQUIZ_PAGE:(\d+)\]\]/g; let m;
+  while((m=re.exec(text))) out.push({pos:m.index,page:Number(m[1])});
+  return out;
+}
+function sourcePageAt(markers,pos){
+  let page=null;
+  for(const m of markers){ if(m.pos>pos) break; page=m.page; }
+  return page;
+}
+function stripPageMarkers(s){
+  return String(s||'').replace(/\[\[MEDQUIZ_PAGE:\d+\]\]/g,' ');
+}
+function detection(status,basis,confidence,evidence='',issues=[]){
+  return {status,basis,confidence,evidence,issues};
+}
+function rawQuestionBase({st,no,qtext,opts,topic,page,fileName}){
+  return {
+    id:uid(),text:qtext,opts,correct:null,explanation:'',
+    topic:topic||'Chưa phân loại',source:'raw-import',
+    sourceMeta:{file:fileName||null,page:page||null,question_no:Number(no)||no||null},
+    sourceOrder:Number(no)||null,importFileName:fileName||null,
+    createdAt:new Date().toISOString()
   };
+}
+function parseQuestionText(raw,fileName=''){
+  const text=normalizeSourceText(raw);
+  const topicMarkers=collectTopicMarkers(text);
+  const pageMarkers=collectPageMarkers(text);
+  const re=/(^|\s)(?:Câu\s*)?(\d{1,4})\s*(?:[.:]|\/)\s*(?=[(*A-Za-zÀ-ỹ0-9“"])/g;
+  const starts=[]; let m;
+  while((m=re.exec(text))) starts.push({markerStart:m.index+(m[1]?m[1].length:0),bodyStart:re.lastIndex,no:m[2]});
 
-  if(typeof renderReviewQueueSummary==='function'){
-    const oldSummary=renderReviewQueueSummary;
-    window.renderReviewQueueSummary=function(){oldSummary();const el=document.getElementById('reviewQueueSummary');if(el&&reviewQueue.length)el.innerHTML+='<br><span class="small">Mở tab Review Queue để sửa stem/options/topic, thêm hoặc xóa lựa chọn, chọn đáp án và đưa câu vào Question Bank.</span>';};
+  const valid=[],review=[],invalid=[];
+  const existing=new Set(questions.map(fingerprint));
+  reviewQueue.forEach(q=>{const t=normalizeKey(q.text||q.stem||q.sample||'');const os=normalizedReviewOpts(q);existing.add(t+'||'+os.map(normalizeKey).join('|'));});
+  let duplicate=0;
+
+  for(let i=0;i<starts.length;i++){
+    const st=starts[i],end=i+1<starts.length?starts[i+1].markerStart:text.length;
+    let body=stripPageMarkers(text.slice(st.bodyStart,end)).trim();
+    if(!body) continue;
+    const page=sourcePageAt(pageMarkers,st.markerStart);
+    const topic=topicAt(topicMarkers,st.markerStart);
+    const sourceMeta={file:fileName||null,page:page||null,question_no:Number(st.no)||st.no||null};
+    const common={id:uid(),topic,source:'raw-import',sourceMeta,sourceOrder:Number(st.no)||null,importFileName:fileName||null,createdAt:new Date().toISOString()};
+
+    const ansRe=/\*{0,2}\s*(?:Đáp\s*án(?:\s*đúng)?|Đ\/?A|Answer|Correct\s*answer)\s*:?\s*\*{0,2}\s*([A-F])[\.\)]?/i;
+    const explicit=ansRe.exec(body);
+    const optionZone=explicit?body.slice(0,explicit.index):body;
+    const optRe=/(^|\s)(?:\*{1,2})?([A-F])\s*(?:[\.\)]|:|-)\s*(?:\*{1,2})?\s*/g;
+    const om=[]; let x;
+    while((x=optRe.exec(optionZone))) om.push({start:x.index+(x[1]?x[1].length:0),contentStart:optRe.lastIndex,letter:x[2].toUpperCase(),markerBold:/\*\*/.test(x[0])});
+
+    if(om.length<2){
+      const item={...common,text:cleanMd(body),stem:cleanMd(body),opts:[],correct:null,correctDraft:null,answerStatus:'needs_manual_repair',detection:detection('needs_review','parser_could_not_split',0,'Parser không tách được options. Hãy sửa stem và thêm lựa chọn trong Review Queue.',['BROKEN_OPTIONS'])};
+      const fp=fingerprint(item);if(existing.has(fp)){duplicate++;continue;}existing.add(fp);review.push(item);continue;
+    }
+
+    const qtext=cleanMd(optionZone.slice(0,om[0].start));
+    const rawOpts=[];
+    for(let j=0;j<om.length;j++){
+      const oe=j+1<om.length?om[j+1].start:optionZone.length;
+      rawOpts.push({letter:om[j].letter,raw:optionZone.slice(om[j].contentStart,oe).trim(),markerBold:!!om[j].markerBold});
+    }
+    const opts=rawOpts.map(o=>cleanMd(o.raw));
+    const base={...common,text:qtext||cleanMd(body),stem:qtext||cleanMd(body),opts,correct:null,explanation:''};
+    const fp=fingerprint(base);if(existing.has(fp)){duplicate++;continue;}existing.add(fp);
+
+    if(!qtext||opts.some(o=>!o)){
+      review.push({...base,correctDraft:null,answerStatus:'needs_manual_repair',detection:detection('needs_review','parser_partial_structure',0.15,!qtext?'Stem chưa tách sạch. Hãy sửa trong Review Queue.':'Có option rỗng. Hãy sửa trong Review Queue.',['BROKEN_STRUCTURE'])});
+      continue;
+    }
+
+    let correctLetter=null,det=null;
+    if(explicit){
+      correctLetter=explicit[1].toUpperCase();
+      det=detection('ready','explicit_answer_key',0.99,explicit[0],[]);
+    }else{
+      const boldMarked=rawOpts.filter(o=>o.markerBold||/^\*\*/.test(o.raw)||/\*\*$/.test(o.raw)||/\*\*[^*]+\*\*/.test(o.raw));
+      const checkMarked=rawOpts.filter(o=>/^(?:✓|✔|✅|☑)\s*/.test(o.raw)||/(?:\(|\[)\s*(?:đúng|correct|x)\s*(?:\)|\])/i.test(o.raw));
+      if(boldMarked.length===1){correctLetter=boldMarked[0].letter;det=detection('ready','bold_option',0.94,'Một lựa chọn được đánh dấu bold rõ ràng.',[]);}
+      else if(checkMarked.length===1){correctLetter=checkMarked[0].letter;det=detection('ready','marked_option',0.96,'Một lựa chọn có marker đúng/check.',[]);}
+      else if(boldMarked.length>1||checkMarked.length>1) det=detection('needs_review','conflicting_markers',0.35,'Có nhiều lựa chọn cùng mang marker đáp án.',['MULTIPLE_ANSWER_SIGNALS']);
+      else det=detection('needs_review','no_source_answer',0.10,'Không tìm thấy answer key đủ chắc chắn. Hãy chọn đáp án trong Review Queue.',['NO_SOURCE_ANSWER']);
+    }
+
+    const correct=rawOpts.findIndex(o=>o.letter===correctLetter);
+    if(correct>=0&&det.status==='ready') valid.push({...base,correct,detection:det,review:{status:'source_verified',answer_basis:det.basis,confidence:'high'}});
+    else review.push({...base,correct:null,correctDraft:correct>=0?correct:null,detection:det,answerStatus:'needs_review'});
   }
+  return {valid,review,invalid,detected:starts.length,duplicate,expected:null,datasetId:null,datasetTitle:null,fileName:fileName||null,mode:'merge',schemaVersion:null};
+}
+async function ensurePdfJs(){
+  if(window.pdfjsLib) return window.pdfjsLib;
+  const sources=[
+    ['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'],
+    ['https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js','https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js']
+  ];
+  let lastError=null;
+  for(const [src,worker] of sources){
+    try{
+      await new Promise((resolve,reject)=>{
+        const s=document.createElement('script');s.src=src;s.async=true;
+        const timer=setTimeout(()=>{s.remove();reject(new Error('Timeout PDF.js'));},12000);
+        s.onload=()=>{clearTimeout(timer);resolve();};
+        s.onerror=()=>{clearTimeout(timer);s.remove();reject(new Error('Không tải được '+src));};
+        document.head.appendChild(s);
+      });
+      if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc=worker;return window.pdfjsLib;}
+    }catch(err){lastError=err;}
+  }
+  throw new Error('Không tải được PDF.js để đọc PDF. Hãy kiểm tra mạng hoặc dùng JSON/TXT/MD. '+(lastError?.message||''));
+}
+async function extractPdf(file){
+  const pdfjsLib=await ensurePdfJs();
+  const data=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data}).promise;
+  const chunks=[];let textChars=0;
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p),tc=await page.getTextContent();
+    chunks.push(`[[MEDQUIZ_PAGE:${p}]]`);let line='';
+    for(const item of tc.items){
+      const style=tc.styles?.[item.fontName]||{};
+      const fontHint=`${item.fontName||''} ${style.fontFamily||''}`.toLowerCase();
+      const isBold=/bold|black|semibold|demi/.test(fontHint);
+      let piece=String(item.str||'');textChars+=piece.trim().length;
+      if(isBold&&piece.trim()) piece=`**${piece}**`;
+      line+=(line?' ':'')+piece;
+      if(item.hasEOL){chunks.push(line);line='';}
+    }
+    if(line)chunks.push(line);
+  }
+  if(textChars<80) throw new Error('PDF gần như không có text layer. Có thể đây là PDF scan/image; cần OCR trước rồi import lại.');
+  return chunks.join('\n');
+}
+function structurallyValid(item){
+  return !!item.text && Array.isArray(item.opts) && item.opts.length>=2 && item.opts.length<=6 && item.opts.every(Boolean);
+}
+function normalizeImportedItemBase(item,idx,file,datasetId,datasetTitle){
+  return {
+    ...item,
+    datasetId:datasetId||null,
+    datasetTitle:datasetTitle||null,
+    sourceOrder:item.sourceOrder||idx+1,
+    importFileName:file.name,
+    createdAt:item.createdAt||new Date().toISOString()
+  };
+}
+async function parseFile(file){
+  document.getElementById('fileName').textContent=`Đang đọc: ${file.name}`;
+  try{
+    const ext=(file.name.split('.').pop()||'').toLowerCase();
+    const selectedMode=document.getElementById('jsonImportMode')?.value||'replace';
 
-  try{renderImportPreview();renderReviewQueueSummary();renderReviewTab();}catch(e){console.warn('V12 review patch init',e);}
-})();
-<\/script>`;
-    html=html.replace('</body>',patchScript+'\n</body>');
-    document.open();document.write(html);document.close();
+    if(ext==='json'){
+      const data=JSON.parse(await file.text());
+
+      if(data.schema_version==='quiz.source-archive.v3'){
+        const incoming=Array.isArray(data.questions)?data.questions:null;
+        if(!incoming) throw new Error('Source Archive không có mảng questions.');
+
+        const datasetId=cleanMd(data.dataset?.id||'source-archive');
+        const datasetTitle=cleanMd(data.dataset?.title||file.name);
+        const expected=Number.isInteger(Number(data.dataset?.detected_single_choice_occurrences))
+          ? Number(data.dataset.detected_single_choice_occurrences):incoming.length;
+
+        const existingQuestions=(selectedMode==='replace'&&datasetId)
+          ? questions.filter(q=>q.datasetId!==datasetId):questions;
+        const existing=new Set(existingQuestions.map(fingerprint));
+
+        const valid=[],review=[],invalid=[]; let duplicate=0;
+
+        incoming.forEach((q,idx)=>{
+          const optionObjs=Array.isArray(q.options)?q.options:[];
+          const opts=optionObjs.map(o=>cleanMd(o?.text||''));
+          const optionIds=optionObjs.map(o=>String(o?.id||'').toUpperCase());
+          const answerId=q.correct_answer?String(q.correct_answer).toUpperCase():'';
+          const correct=answerId?optionIds.indexOf(answerId):-1;
+
+          const base=normalizeImportedItemBase({
+            id:q.id||uid(),text:cleanMd(q.stem),opts,correct:null,
+            topic:cleanMd(q.classification?.topic||q.source?.section||'Chưa phân loại'),
+            subtopic:cleanMd(q.classification?.subtopic||''),
+            subject:cleanMd(q.classification?.subject||data.dataset?.subject||'Hệ tiêu hóa'),
+            explanation:'',source:'quiz.source-archive.v3',sourceMeta:q.source||null,
+            review:q.answer_status||null,answerSignals:Array.isArray(q.answer_signals)?q.answer_signals:[]
+          },idx,file,datasetId,datasetTitle);
+
+          if(!structurallyValid(base)){
+            invalid.push({no:idx+1,page:q.source?.page||null,reason:'BROKEN_STRUCTURE',detail:'Stem/options không hợp lệ.',sample:base.text});
+            return;
+          }
+
+          const fp=fingerprint(base);
+          if(existing.has(fp)){duplicate++;return}
+          existing.add(fp);
+
+          if(q.answer_status==='verified_from_source'&&correct>=0){
+            valid.push({...base,correct,detection:detection('ready','source_archive_verified',0.99,'verified_from_source',[]),review:q.answer_status});
+          }else{
+            review.push({
+              ...base,correct:null,correctDraft:correct>=0?correct:null,
+              answerStatus:q.answer_status||'needs_review',
+              detection:detection('needs_review','source_archive_unresolved',correct>=0?0.60:0.15,'Source Archive chưa xác minh đáp án.',['SOURCE_UNRESOLVED'])
+            });
+          }
+        });
+
+        importBuffer={valid,review,invalid,detected:incoming.length,duplicate,expected,datasetId,datasetTitle,fileName:file.name,mode:selectedMode,schemaVersion:data.schema_version};
+
+      }else{
+        const incoming=Array.isArray(data)?data:(Array.isArray(data.questions)?data.questions:null);
+        if(!incoming) throw new Error('JSON không có mảng questions hợp lệ.');
+
+        const isCanonical=data.schema_version==='quiz.input.v3';
+        const isNormalized=data.schema_version==='quiz.normalized.v3';
+        const datasetId=cleanMd(data.dataset?.id||'');
+        const datasetTitle=cleanMd(data.dataset?.title||'');
+        const expectedRaw=Number(data.dataset?.question_count);
+        const expected=Number.isInteger(expectedRaw)&&expectedRaw>=0?expectedRaw:null;
+
+        const existingQuestions=(selectedMode==='replace'&&datasetId)
+          ? questions.filter(q=>q.datasetId!==datasetId):questions;
+        const existing=new Set(existingQuestions.map(fingerprint));
+        const incomingIds=new Set();
+        const valid=[],review=[],invalid=[]; let duplicate=0;
+
+        incoming.forEach((q,idx)=>{
+          let item=null, proposed=null, answerBasis='json_answer';
+
+          if(isCanonical){
+            const optionObjs=Array.isArray(q.options)?q.options:[];
+            const opts=optionObjs.map(o=>cleanMd(o?.text||''));
+            const optionIds=optionObjs.map(o=>String(o?.id||'').toUpperCase());
+            const answerId=String(q.correct_answer||'').toUpperCase();
+            proposed=answerId?optionIds.indexOf(answerId):-1;
+            item={
+              id:q.id||uid(),text:cleanMd(q.stem),opts,correct:null,
+              topic:cleanMd(q.topic||'Chưa phân loại'),subtopic:cleanMd(q.subtopic||''),
+              subject:cleanMd(q.subject||data.dataset?.subject||''),explanation:cleanMd(q.explanation||''),
+              source:'quiz.input.v3',sourceMeta:q.source||null,review:q.review||null
+            };
+          }else if(isNormalized){
+            const optionObjs=Array.isArray(q.options)?q.options:[];
+            const opts=optionObjs.map(o=>cleanMd(o?.text||''));
+            const correctId=String(q.correct_answer?.option_id||'').toUpperCase();
+            const optionIds=optionObjs.map(o=>String(o?.id||'').toUpperCase());
+            proposed=correctId?optionIds.indexOf(correctId):-1;
+            answerBasis='normalized_answer';
+            item={
+              id:q.id||uid(),text:cleanMd(q.stem),opts,correct:null,
+              topic:cleanMd(q.classification?.topic||'Chưa phân loại'),subtopic:cleanMd(q.classification?.subtopic||''),
+              subject:cleanMd(q.classification?.subject||''),explanation:cleanMd(q.explanation||''),
+              source:'quiz.normalized.v3',sourceMeta:q.source||null,review:q.quality||null
+            };
+          }else{
+            const opts=Array.isArray(q.opts)?q.opts.map(cleanMd):[];
+            proposed=Number(q.correct);
+            answerBasis='legacy_answer';
+            item={
+              id:q.id||uid(),text:cleanMd(q.text),opts,correct:null,
+              topic:cleanMd(q.topic||'Chưa phân loại'),subtopic:cleanMd(q.subtopic||''),
+              subject:cleanMd(q.subject||''),explanation:cleanMd(q.explanation||''),
+              source:'json-import',sourceMeta:q.sourceMeta||null
+            };
+          }
+
+          item=normalizeImportedItemBase(item,idx,file,datasetId,datasetTitle);
+
+          if(!structurallyValid(item)){
+            invalid.push({no:idx+1,page:item.sourceMeta?.page||null,reason:'BROKEN_STRUCTURE',detail:'Stem/options không hợp lệ.',sample:item.text});
+            return;
+          }
+          if(incomingIds.has(String(item.id))){
+            invalid.push({no:idx+1,page:item.sourceMeta?.page||null,reason:'DUPLICATE_ID',detail:`Trùng id trong file: ${item.id}`,sample:item.text});
+            return;
+          }
+          incomingIds.add(String(item.id));
+
+          const fp=fingerprint(item);
+          if(existing.has(fp)){duplicate++;return}
+          existing.add(fp);
+
+          if(Number.isInteger(proposed)&&proposed>=0&&proposed<item.opts.length){
+            valid.push({...item,correct:proposed,detection:detection('ready',answerBasis,0.99,'correct_answer hợp lệ trong JSON.',[])});
+          }else{
+            review.push({
+              ...item,correct:null,correctDraft:null,answerStatus:'needs_review',
+              detection:detection('needs_review','missing_or_invalid_answer',0.15,'correct_answer thiếu hoặc không trỏ tới option hiện có.',['MISSING_OR_INVALID_CORRECT_ANSWER'])
+            });
+          }
+        });
+
+        importBuffer={valid,review,invalid,detected:incoming.length,duplicate,expected,datasetId:datasetId||null,datasetTitle:datasetTitle||null,fileName:file.name,mode:(isCanonical||isNormalized)?selectedMode:'merge',schemaVersion:data.schema_version||null};
+      }
+    }else{
+      const raw=ext==='pdf'?await extractPdf(file):await file.text();
+      importBuffer=parseQuestionText(raw,file.name);
+      importBuffer.fileName=file.name;
+    }
+
+    importBuffer.valid.forEach(q=>{q.importFileName=file.name});
+    importBuffer.review.forEach(q=>{q.importFileName=file.name});
+    importReviewPage=1;
+    document.getElementById('fileName').textContent=file.name;
+    renderImportPreview();
   }catch(err){
     console.error(err);
-    document.getElementById('loading').innerHTML='<div style="max-width:720px;padding:32px;text-align:center"><h2>Không thể tải MedQuiz Pink</h2><p>'+String(err.message||err)+'</p><p>Hãy refresh cứng trang. Nếu vẫn lỗi, báo lại để kiểm tra bundle deploy.</p></div>';
+    alert('Không đọc được file: '+err.message);
+    document.getElementById('fileName').textContent='Đọc file thất bại';
   }
+}
+function updateImportSteps(){
+  const b=importBuffer;
+  const hasData=(b.detected||0)>0;
+  const hasReview=(b.review||[]).length>0;
+  const ready=(b.valid||[]).length>0;
+  document.querySelectorAll('[data-import-step]').forEach(el=>{
+    const step=Number(el.dataset.importStep);
+    el.classList.remove('active','done');
+    if(step===1){
+      if(hasData) el.classList.add('done'); else el.classList.add('active');
+    }else if(step===2){
+      if(!hasData) return;
+      if(hasReview) el.classList.add('done'); else if(ready) el.classList.add('done');
+    }else if(step===3){
+      if(hasReview) el.classList.add('active');
+      else if(hasData&&ready) el.classList.add('done');
+    }else if(step===4){
+      if(hasData&&(ready||hasReview)) el.classList.add('active');
+    }
+  });
+  const badge=document.getElementById('importStageBadge');
+  if(badge){
+    badge.textContent=!hasData?'Chưa có dữ liệu':hasReview?`${b.valid.length} Ready · ${hasReview} Review`:`Ready to commit`;
+    badge.className='badge '+(!hasData?'':hasReview?'warn':'ok');
+  }
+}
+function renderImportPreview(){
+  const b=importBuffer;
+  const expectedEl=document.getElementById('pExpected');
+  if(expectedEl) expectedEl.textContent=Number.isInteger(b.expected)?b.expected:'—';
+  document.getElementById('pDetected').textContent=b.detected||0;
+  document.getElementById('pValid').textContent=b.valid.length;
+  document.getElementById('pReview').textContent=(b.review||[]).length;
+  document.getElementById('pInvalid').textContent=b.invalid.length;
+  document.getElementById('pDuplicate').textContent=b.duplicate||0;
+
+  // Ready vào Question Bank; Needs Review được lưu vào Review Queue để user sửa sau.
+  document.getElementById('commitImportBtn').disabled=!((b.valid||[]).length||(b.review||[]).length);
+
+  const warn=document.getElementById('importWarning');
+  const messages=[];
+  if(Number.isInteger(b.expected)&&b.detected!==b.expected){
+    messages.push(`Metadata khai báo ${b.expected} câu nhưng parser nhận diện ${b.detected}.`);
+  }
+  if((b.review||[]).length){
+    messages.push(`${b.review.length} câu chưa đủ chắc chắn. Khi Commit, các câu này sẽ vào Review Queue để user tự sửa/chọn đáp án.`);
+  }
+  if(b.invalid.length){
+    messages.push(`${b.invalid.length} record không thể dùng (schema/file lỗi) sẽ không được import.`);
+  }
+  if(b.duplicate){
+    messages.push(`${b.duplicate} câu trùng đã được bỏ qua.`);
+  }
+  if(b.mode==='replace'&&b.datasetId){
+    const oldCount=questions.filter(q=>q.datasetId===b.datasetId).length;
+    if(oldCount) messages.push(`Replace mode: khi Commit, ${oldCount} câu cũ của dataset "${b.datasetId}" sẽ được thay thế.`);
+  }
+
+  if(messages.length){
+    warn.classList.remove('hidden');
+    warn.innerHTML=messages.map(x=>`<div>${escapeHtml(x)}</div>`).join('');
+  }else{
+    warn.classList.add('hidden');warn.innerHTML='';
+  }
+
+  const preview=document.getElementById('importPreview');
+  const readyRows=b.valid.slice(0,80).map((q,i)=>`
+    <div class="preview-row">
+      <div class="small">
+        ${i+1}/${b.valid.length}
+        <span class="badge ok">Ready</span>
+        <span class="badge">${escapeHtml(q.topic||'Chưa phân loại')}</span>
+        ${q.sourceMeta?.page?`<span class="badge">Trang ${q.sourceMeta.page}</span>`:''}
+        ${q.detection?.basis?`<span class="detect-basis">${escapeHtml(q.detection.basis)}</span>`:''}
+      </div>
+      <div style="font-weight:600;margin:5px 0">${escapeHtml(q.text)}</div>
+      <div class="small">Đúng: ${String.fromCharCode(65+q.correct)} · ${escapeHtml(q.opts[q.correct])}</div>
+    </div>`).join('');
+
+  const reviewRows=(b.review||[]).slice(0,20).map(q=>`
+    <div class="preview-row">
+      <div class="small">
+        <span class="badge warn">Needs Review</span>
+        ${q.sourceMeta?.page?`<span class="badge">Trang ${q.sourceMeta.page}</span>`:''}
+        <span class="detect-basis">${escapeHtml(q.detection?.basis||'unknown')}</span>
+      </div>
+      <div style="font-weight:600;margin:5px 0">${escapeHtml(q.text)}</div>
+      <div class="small">${escapeHtml(q.detection?.evidence||'Chưa xác định chắc đáp án.')}</div>
+    </div>`).join('');
+
+  const badRows=b.invalid.slice(0,40).map(x=>`
+    <div class="preview-row">
+      <span class="badge bad">Broken</span>
+      ${x.page?`<span class="badge">Trang ${x.page}</span>`:''}
+      <div class="small" style="margin-top:5px">${escapeHtml(x.reason)} · ${escapeHtml(x.detail||'')} · ${escapeHtml(x.sample||'')}</div>
+    </div>`).join('');
+
+  const head=(b.detected||b.expected)?`
+    <div class="preview-row">
+      <b>${b.datasetTitle?escapeHtml(b.datasetTitle):'Preview import'}</b>
+      <div class="small" style="margin-top:4px">
+        File: ${escapeHtml(b.fileName||'—')}
+        ${b.datasetId?` · Dataset ID: ${escapeHtml(b.datasetId)}`:''}
+        · Ready: ${b.valid.length}
+        · Review: ${(b.review||[]).length}
+        · Broken: ${b.invalid.length}
+      </div>
+    </div>`:'';
+
+  const extra=(b.valid.length>80||b.review.length>20||b.invalid.length>40)
+    ? `<div class="preview-row small">Preview đã rút gọn để giao diện không bị nặng. Dùng Review Workspace bên dưới để xử lý toàn bộ câu cần review.</div>`:'';
+
+  preview.innerHTML=(readyRows||reviewRows||badRows)?head+readyRows+reviewRows+badRows+extra:'<div class="empty">Không tìm thấy câu hỏi.</div>';
+
+  updateImportSteps();
+  renderImportReview();
+  renderReviewQueueSummary();
+}
+function renderImportReview(){
+  const host=document.getElementById('importReviewList');
+  if(!host) return;
+  const review=importBuffer.review||[];
+  const pages=Math.max(1,Math.ceil(review.length/IMPORT_REVIEW_PAGE_SIZE));
+  importReviewPage=Math.max(1,Math.min(importReviewPage,pages));
+  const start=(importReviewPage-1)*IMPORT_REVIEW_PAGE_SIZE;
+  const pageItems=review.slice(start,start+IMPORT_REVIEW_PAGE_SIZE);
+
+  document.getElementById('reviewRemainingBadge').textContent=`${review.length} cần review`;
+  const selectedInPage=pageItems.filter(q=>Number.isInteger(q.correctDraft)).length;
+  document.getElementById('reviewResolvedBadge').textContent=`${selectedInPage} đã chọn trong trang`;
+  document.getElementById('reviewPageLabel').textContent=`Trang ${importReviewPage}/${pages}`;
+  document.getElementById('reviewPrevBtn').disabled=importReviewPage<=1;
+  document.getElementById('reviewNextBtn').disabled=importReviewPage>=pages;
+
+  if(!review.length){
+    host.innerHTML=importBuffer.detected
+      ? '<div class="review-empty">Không còn câu Needs Review. Có thể Commit các câu Ready.</div>'
+      : '<div class="review-empty">Upload dữ liệu để bắt đầu review.</div>';
+    return;
+  }
+
+  host.innerHTML=pageItems.map((q,localIndex)=>{
+    const absolute=start+localIndex;
+    const issues=q.detection?.issues||[];
+    return `<div class="review-card ${Number.isInteger(q.correctDraft)?'selected':''}" data-review-card="${absolute}">
+      <div class="review-head">
+        <div class="review-source">
+          <span class="badge warn">Needs Review</span>
+          ${q.sourceMeta?.page?`<span class="badge">Trang ${q.sourceMeta.page}</span>`:''}
+          ${q.sourceMeta?.question_no?`<span class="badge">Câu ${escapeHtml(q.sourceMeta.question_no)}</span>`:''}
+          <span class="detect-basis">${escapeHtml(q.detection?.basis||'unknown')}</span>
+          <span class="detect-basis">confidence ${Math.round((q.detection?.confidence||0)*100)}%</span>
+        </div>
+        <button class="danger" data-review-skip="${absolute}">Bỏ câu</button>
+      </div>
+
+      <div class="field">
+        <label>Stem</label>
+        <textarea class="review-stem" data-review-stem="${absolute}">${escapeHtml(q.text)}</textarea>
+      </div>
+
+      <div style="margin-top:9px">
+        ${q.opts.map((opt,oi)=>`
+          <div class="review-option">
+            <input type="radio" name="review-answer-${absolute}" value="${oi}" data-review-answer="${absolute}" ${q.correctDraft===oi?'checked':''} aria-label="Chọn ${String.fromCharCode(65+oi)} là đáp án đúng">
+            <input type="text" value="${escapeHtml(opt)}" data-review-option="${absolute}" data-option-index="${oi}">
+          </div>`).join('')}
+      </div>
+
+      <div class="form-grid" style="margin-top:10px">
+        <div class="field"><label>Topic</label><input value="${escapeHtml(q.topic||'Chưa phân loại')}" data-review-topic="${absolute}"></div>
+        <div class="field"><label>Đáp án đã chọn</label><input value="${Number.isInteger(q.correctDraft)?String.fromCharCode(65+q.correctDraft):'Chưa chọn'}" readonly></div>
+      </div>
+
+      <div class="review-reason">
+        ${escapeHtml(q.detection?.evidence||'Không tìm thấy answer key đủ chắc chắn.')}
+        ${issues.length?`<br>Issue: ${issues.map(escapeHtml).join(', ')}`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  host.querySelectorAll('[data-review-answer]').forEach(el=>el.onchange=()=>{
+    const i=Number(el.dataset.reviewAnswer);
+    importBuffer.review[i].correctDraft=Number(el.value);
+    renderImportReview();
+  });
+  host.querySelectorAll('[data-review-stem]').forEach(el=>el.oninput=()=>{
+    importBuffer.review[Number(el.dataset.reviewStem)].text=el.value.trim();
+  });
+  host.querySelectorAll('[data-review-option]').forEach(el=>el.oninput=()=>{
+    const i=Number(el.dataset.reviewOption), oi=Number(el.dataset.optionIndex);
+    importBuffer.review[i].opts[oi]=el.value.trim();
+  });
+  host.querySelectorAll('[data-review-topic]').forEach(el=>el.oninput=()=>{
+    importBuffer.review[Number(el.dataset.reviewTopic)].topic=el.value.trim()||'Chưa phân loại';
+  });
+  host.querySelectorAll('[data-review-skip]').forEach(el=>el.onclick=()=>{
+    skipReviewQuestion(Number(el.dataset.reviewSkip));
+  });
+}
+function skipReviewQuestion(index){
+  const q=importBuffer.review[index];
+  if(!q) return;
+  importBuffer.invalid.push({
+    no:q.sourceMeta?.question_no||q.sourceOrder||index+1,
+    page:q.sourceMeta?.page||null,
+    reason:'USER_SKIPPED_REVIEW',
+    detail:'User chủ động bỏ câu trong bước Review.',
+    sample:q.text
+  });
+  importBuffer.review.splice(index,1);
+  renderImportPreview();
+}
+function applyReviewedAnswers(){
+  const remaining=[]; let moved=0; let invalidEdits=0;
+  const existing=new Set([
+    ...questions.map(fingerprint),
+    ...importBuffer.valid.map(fingerprint)
+  ]);
+
+  for(const q of importBuffer.review){
+    if(!Number.isInteger(q.correctDraft)){remaining.push(q);continue}
+    if(!structurallyValid(q)||q.correctDraft<0||q.correctDraft>=q.opts.length){
+      invalidEdits++;
+      q.detection={...(q.detection||{}),issues:[...(q.detection?.issues||[]),'INVALID_USER_EDIT']};
+      remaining.push(q);
+      continue;
+    }
+
+    const item={
+      ...q,
+      correct:q.correctDraft,
+      answerStatus:'user_verified',
+      review:{status:'user_verified',answer_basis:'user_review',confidence:'high',reviewed_at:new Date().toISOString()},
+      detection:{...(q.detection||{}),status:'ready',basis:'user_review',confidence:1,evidence:'User đã chọn đáp án trong Import Review.'}
+    };
+    delete item.correctDraft;
+
+    const fp=fingerprint(item);
+    if(existing.has(fp)){
+      importBuffer.duplicate++;
+      continue;
+    }
+    existing.add(fp);
+    importBuffer.valid.push(item);
+    moved++;
+  }
+
+  importBuffer.review=remaining;
+  importReviewPage=1;
+  renderImportPreview();
+
+  if(invalidEdits) alert(`${moved} câu đã được xác nhận. ${invalidEdits} câu có nội dung sửa chưa hợp lệ nên vẫn nằm trong Review.`);
+  else if(moved) alert(`Đã xác nhận ${moved} câu và chuyển sang Ready.`);
+  else if(importBuffer.review.length) alert('Chưa có câu nào được chọn đáp án trong Review.');
+}
+function skipAllUnresolved(){
+  const unresolved=importBuffer.review||[];
+  if(!unresolved.length) return;
+  if(!confirm(`Bỏ ${unresolved.length} câu chưa xử lý khỏi phiên import? Các câu này sẽ được ghi là Broken/Skipped và không vào Question Bank.`)) return;
+  unresolved.forEach((q,i)=>importBuffer.invalid.push({
+    no:q.sourceMeta?.question_no||q.sourceOrder||i+1,
+    page:q.sourceMeta?.page||null,
+    reason:'USER_SKIPPED_REVIEW',
+    detail:'User bỏ câu chưa xử lý khi kết thúc Review.',
+    sample:q.text
+  }));
+  importBuffer.review=[];
+  renderImportPreview();
+}
+function renderReviewQueueSummary(){
+  const el=document.getElementById('reviewQueueSummary');
+  if(!el) return;
+  if(!reviewQueue.length){
+    el.textContent='Chưa có câu cần review đã lưu.';
+    return;
+  }
+  const byTopic={};
+  reviewQueue.forEach(q=>{
+    const t=q.topic||'Chưa phân loại';
+    byTopic[t]=(byTopic[t]||0)+1;
+  });
+  el.innerHTML=`<b>${reviewQueue.length} câu đang lưu trong Review Queue.</b><br>`+
+    Object.entries(byTopic).map(([k,v])=>`${escapeHtml(k)}: ${v}`).join(' · ');
+}
+document.getElementById('clearReviewQueueBtn').onclick=()=>{
+  if(!reviewQueue.length)return;
+  if(confirm(`Xóa ${reviewQueue.length} câu khỏi Review Queue?`)){
+    reviewQueue=[];persist();renderReviewQueueSummary();renderReviewTab();
+  }
+};
+document.getElementById('deleteImportedFileBtn').onclick=deleteImportedFile;
+document.getElementById('chooseFileBtn').onclick=()=>document.getElementById('sourceFile').click();
+document.getElementById('sourceFile').onchange=e=>{const f=e.target.files?.[0];if(f)parseFile(f);e.target.value='';};
+document.getElementById('parsePasteBtn').onclick=()=>{
+  const t=document.getElementById('pasteText').value;
+  if(!t.trim()){alert('Hãy dán text trước.');return}
+  importBuffer=parseQuestionText(t,'pasted-text');
+  importReviewPage=1;
+  renderImportPreview();
+};
+document.getElementById('clearPreviewBtn').onclick=()=>{
+  importBuffer=blankImportBuffer();importReviewPage=1;
+  document.getElementById('pasteText').value='';
+  document.getElementById('fileName').textContent='Chưa chọn file';
+  renderImportPreview();
+};
+document.getElementById('applyReviewedBtn').onclick=applyReviewedAnswers;
+document.getElementById('skipUnresolvedBtn').onclick=skipAllUnresolved;
+document.getElementById('reviewPrevBtn').onclick=()=>{importReviewPage=Math.max(1,importReviewPage-1);renderImportReview()};
+document.getElementById('reviewNextBtn').onclick=()=>{importReviewPage++;renderImportReview()};
+
+document.getElementById('commitImportBtn').onclick=()=>{
+  const incoming=[...(importBuffer.valid||[])];
+  const unresolved=[...(importBuffer.review||[])];
+  if(!incoming.length&&!unresolved.length) return;
+  let removed=0;
+
+  if(importBuffer.mode==='replace'&&importBuffer.datasetId){
+    const old=questions.filter(q=>q.datasetId===importBuffer.datasetId);
+    removed=old.length;
+    const oldIds=new Set(old.map(q=>q.id));
+    questions=questions.filter(q=>q.datasetId!==importBuffer.datasetId);
+    oldIds.forEach(id=>delete progress[id]);
+    reviewQueue=reviewQueue.filter(q=>q.datasetId!==importBuffer.datasetId);
+    if(session&&session.queue?.some(id=>oldIds.has(id)))session=null;
+  }
+
+  questions.push(...incoming);
+  unresolved.forEach(q=>reviewQueue.push({
+    ...q,
+    correct:null,
+    answerStatus:q.answerStatus||'needs_review',
+    queuedAt:new Date().toISOString(),
+    review:{status:'needs_review',answer_basis:'user_review_required',confidence:'unresolved'}
+  }));
+
+  [...incoming,...unresolved].forEach(q=>{
+    const name=cleanMd(q.topic||'');
+    if(name&&!topicRegistry.some(t=>t.name===name))topicRegistry.push({id:slugTopicId(name),name,createdAt:new Date().toISOString(),source:unresolved.includes(q)?'review':'import'});
+  });
+  persist();
+
+  const imported=incoming.length,queued=unresolved.length,detected=importBuffer.detected||imported+queued;
+  const broken=(importBuffer.invalid||[]).length,duplicates=importBuffer.duplicate||0;
+  importBuffer=blankImportBuffer();importReviewPage=1;reviewQueuePage=1;
+  renderImportPreview();refreshAll();renderQuestion();
+  alert(`Import hoàn tất: ${imported} câu vào Question Bank · ${queued} câu vào Review Queue · ${broken} Broken/Skipped · ${duplicates} Trùng. Tổng nhận diện: ${detected}.${removed?` Đã thay thế ${removed} câu cũ.`:''}`);
+};
+
+/* Progress */
+function renderProgress(){
+  const topics=getTopics();
+  const host=document.getElementById('topicProgress');
+  if(!topics.length){host.innerHTML='<div class="empty">Chưa có dữ liệu.</div>';return}
+  host.innerHTML=`
+    <div class="topic-row header"><div>Chủ đề</div><div>Tổng</div><div>Đã làm</div><div>Đúng</div><div class="hide-mobile">Sai / lượt</div></div>
+    ${topics.map(t=>{
+      const s=overallStats(questions.filter(q=>(q.topic||'Chưa phân loại')===t));
+      return `<div class="topic-row">
+        <div><b>${escapeHtml(t)}</b><div class="progress" style="margin-top:7px"><div style="width:${s.total?s.done/s.total*100:0}%"></div></div></div>
+        <div>${s.total}</div><div>${s.done}</div><div>${s.correct}</div><div class="hide-mobile">${s.wrong} / ${s.attempts}</div>
+      </div>`;
+    }).join('')}`;
+}
+document.getElementById('resetProgressBtn').onclick=()=>{
+  if(confirm('Reset toàn bộ tiến độ nhưng giữ nguyên câu hỏi?')){progress={};persist();session=null;refreshAll();}
+};
+
+function refreshAll(){
+  refreshSelectors();
+  renderGlobalStats();
+  refreshImportedFileSelector();
+  renderReviewQueueSummary();
+  renderTopicManager();
+  renderDashboard();
+  renderTopicOverview();
+  renderReviewTab();
+  if(document.getElementById('manage').classList.contains('active')) renderManage();
+  if(document.getElementById('progressTab').classList.contains('active')) renderProgress();
+  if(document.getElementById('flashcards').classList.contains('active')) renderFlashcards();
+}
+refreshAll();
+renderImportPreview();
 })();
 </script>
 </body>
