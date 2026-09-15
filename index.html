@@ -8,60 +8,278 @@
 <body style="margin:0;background:#fff3f8;font-family:Segoe UI,Arial,sans-serif">
 <div id="loading" style="min-height:100vh;display:grid;place-items:center;color:#7e1748">Đang tải MedQuiz Pink…</div>
 <script>window.__MEDQUIZ_BUNDLE__=[];</script>
-<script src="bundle-1.js"></script>
-<script src="bundle-2.js"></script>
-<script src="bundle-3.js"></script>
-<script src="bundle-4.js"></script>
-<script src="bundle-5a.js"></script>
-<script src="bundle-5b.js"></script>
-<script src="bundle-6a.js"></script>
-<script src="bundle-6b.js"></script>
+<script src="bundle-1.js?v=11"></script>
+<script src="bundle-2.js?v=11"></script>
+<script src="bundle-3.js?v=11"></script>
+<script src="bundle-4.js?v=11"></script>
+<script src="bundle-5a.js?v=11"></script>
+<script src="bundle-5b.js?v=11"></script>
+<script src="bundle-6a.js?v=11"></script>
+<script src="bundle-6b.js?v=11"></script>
 <script>
 (async()=>{
+  async function gunzipText(bytes){
+    if(!('DecompressionStream' in window)){
+      throw new Error('Trình duyệt chưa hỗ trợ giải nén dữ liệu của ứng dụng.');
+    }
+    const reader=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip')).getReader();
+    const chunks=[];
+    let total=0;
+    while(true){
+      const {value,done}=await reader.read();
+      if(done) break;
+      if(value){chunks.push(value);total+=value.length;}
+    }
+    const out=new Uint8Array(total);
+    let offset=0;
+    for(const chunk of chunks){out.set(chunk,offset);offset+=chunk.length;}
+    return new TextDecoder('utf-8').decode(out);
+  }
+
   try{
-    const b64=window.__MEDQUIZ_BUNDLE__.join('');
+    const b64=(window.__MEDQUIZ_BUNDLE__||[]).join('');
+    if(!b64 || b64.length<1000) throw new Error('Không tải đủ file ứng dụng. Hãy refresh trang.');
     const raw=atob(b64);
     const bytes=new Uint8Array(raw.length);
     for(let i=0;i<raw.length;i++) bytes[i]=raw.charCodeAt(i);
-    if(!('DecompressionStream' in window)) throw new Error('Trình duyệt chưa hỗ trợ DecompressionStream.');
-    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-    let html=await new Response(stream).text();
+    let html=await gunzipText(bytes);
 
-    // Compatibility helper for the V10 raw PDF/TXT topic parser.
-    // Kept in the loader so the compressed app can be upgraded without touching user data.
-    if(!html.includes('function collectTopicMarkers(')){
-      const helper=`<script>
-function collectTopicMarkers(text){
-  const markers=[];
-  const major=/(^|---\\s*)([IVX]{1,6})\\.\\s*([A-ZÀ-Ỹ][A-ZÀ-Ỹ0-9 \\-–/&]{2,45}?)(?=\\s+(?:---|\\*\\*|Chào|Dựa|Câu|\\d{1,4}\\.))/g;
-  let m;
-  while((m=major.exec(text))){
-    const name=cleanMd(m[3]).replace(/\\s+$/,'');
-    if(name&&!/^NXB\\b/i.test(name)) markers.push({pos:m.index,type:'major',name});
+    const patchCss=`
+.review-edit-card{padding:16px;border:1px solid #efcfdd;border-radius:18px;background:#fff9fc;margin-bottom:12px;box-shadow:0 5px 16px rgba(132,33,83,.06)}
+.review-edit-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.review-edit-options{display:grid;gap:8px;margin-top:10px}
+.review-edit-option{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center}
+.review-edit-option input[type=radio]{width:auto}
+.review-edit-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.review-source-line{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+`;
+    html=html.replace('</style>',patchCss+'\n</style>');
+
+    const patchScript=`<script>
+(function(){
+  if(typeof collectTopicMarkers!=='function'){
+    window.collectTopicMarkers=function(text){
+      const markers=[];
+      const major=/(^|---\\s*)([IVX]{1,6})\\.\\s*([A-ZÀ-Ỹ][A-ZÀ-Ỹ0-9 \\-–/&]{2,45}?)(?=\\s+(?:---|\\*\\*|Chào|Dựa|Câu|\\d{1,4}\\.))/g;
+      let m;
+      while((m=major.exec(text))){
+        const name=cleanMd(m[3]).replace(/\\s+$/,'');
+        if(name&&!/^NXB\\b/i.test(name)) markers.push({pos:m.index,type:'major',name});
+      }
+      const sub=/\\*\\*(Phần\\s+\\d+\\s*:[^*]{2,120})\\*\\*/gi;
+      while((m=sub.exec(text))) markers.push({pos:m.index,type:'sub',name:cleanMd(m[1])});
+      markers.sort((a,b)=>a.pos-b.pos);
+      return markers;
+    };
+    window.topicAt=function(markers,pos){
+      let major='Chưa phân loại',sub='';
+      for(const mk of markers){
+        if(mk.pos>pos) break;
+        if(mk.type==='major'){major=mk.name;sub='';}
+        else if(mk.type==='sub') sub=mk.name;
+      }
+      return sub?major+' / '+sub:major;
+    };
   }
-  const sub=/\\*\\*(Phần\\s+\\d+\\s*:[^*]{2,120})\\*\\*/gi;
-  while((m=sub.exec(text))) markers.push({pos:m.index,type:'sub',name:cleanMd(m[1])});
-  markers.sort((a,b)=>a.pos-b.pos);
-  return markers;
-}
-function topicAt(markers,pos){
-  let major='Chưa phân loại',sub='';
-  for(const mk of markers){
-    if(mk.pos>pos) break;
-    if(mk.type==='major'){major=mk.name;sub='';}
-    else if(mk.type==='sub') sub=mk.name;
+
+  function normalizedReviewText(q){return cleanMd(q.text||q.stem||'');}
+  function normalizedReviewOpts(q){
+    if(Array.isArray(q.opts)) return q.opts.map(x=>cleanMd(x));
+    if(Array.isArray(q.options)) return q.options.map(x=>cleanMd(x&&typeof x==='object'?x.text:x));
+    return [];
   }
-  return sub?major+' / '+sub:major;
-}
-<\/script>`;
-      html=html.replace('</body>',helper+'\n</body>');
+  function saveReviewDraft(index,card){
+    const q=reviewQueue[index];
+    if(!q||!card) return false;
+    const stem=card.querySelector('[data-rq-stem]');
+    const topic=card.querySelector('[data-rq-topic]');
+    const optionEls=[...card.querySelectorAll('[data-rq-option]')];
+    q.text=cleanMd(stem?.value||q.text||q.stem||'');
+    q.stem=q.text;
+    q.topic=cleanMd(topic?.value||q.topic||'Chưa phân loại')||'Chưa phân loại';
+    q.opts=optionEls.map(el=>cleanMd(el.value));
+    const selected=card.querySelector('[data-rq-answer]:checked');
+    q.correctDraft=selected?Number(selected.value):null;
+    q.answerStatus='needs_review';
+    q.updatedAt=new Date().toISOString();
+    persist();
+    return true;
+  }
+  function promoteReview(index,card){
+    const q=reviewQueue[index];
+    if(!q) return;
+    saveReviewDraft(index,card);
+    const text=normalizedReviewText(q);
+    const opts=normalizedReviewOpts(q);
+    const correct=Number(q.correctDraft);
+    if(!text){alert('Stem đang trống.');return;}
+    if(opts.length<2||opts.length>6||opts.some(x=>!x)){alert('Cần từ 2 đến 6 lựa chọn và không được để option trống.');return;}
+    if(!Number.isInteger(correct)||correct<0||correct>=opts.length){alert('Hãy chọn đáp án đúng trước khi lưu vào Question Bank.');return;}
+
+    const item={
+      ...q,
+      id:q.id||uid(),
+      text,
+      stem:text,
+      opts,
+      correct,
+      answerStatus:'user_verified',
+      review:{status:'user_verified',answer_basis:'user_review',confidence:'high',reviewed_at:new Date().toISOString()},
+      detection:{...(q.detection||{}),status:'ready',basis:'user_review',confidence:1,evidence:'User xác nhận trong Review Queue.'}
+    };
+    delete item.correctDraft;
+
+    const fp=fingerprint(item);
+    if(questions.some(existing=>fingerprint(existing)===fp)){
+      alert('Câu này đã tồn tại trong Question Bank. Review item sẽ được bỏ khỏi queue để tránh trùng.');
+      reviewQueue.splice(index,1);
+      persist();
+      refreshAll();
+      return;
     }
+
+    questions.push(item);
+    if(item.topic&&!topicRegistry.some(t=>t.name===item.topic)){
+      topicRegistry.push({id:slugTopicId(item.topic),name:item.topic,createdAt:new Date().toISOString(),source:'review'});
+    }
+    reviewQueue.splice(index,1);
+    persist();
+    refreshAll();
+    renderReviewTab();
+  }
+
+  window.renderReviewTab=function(){
+    const count=document.getElementById('reviewTabCount');
+    const host=document.getElementById('reviewTabList');
+    if(count) count.textContent=reviewQueue.length+' câu';
+    if(!host) return;
+    if(!reviewQueue.length){host.innerHTML='<div class="empty">Review Queue đang trống.</div>';return;}
+
+    host.innerHTML=reviewQueue.map((q,i)=>{
+      const text=normalizedReviewText(q);
+      const opts=normalizedReviewOpts(q);
+      const draft=Number.isInteger(q.correctDraft)?q.correctDraft:(Number.isInteger(q.correct)?q.correct:null);
+      const page=q.sourceMeta?.page||q.source?.page||null;
+      const qno=q.sourceMeta?.question_no||q.source?.question_no||q.sourceOrder||null;
+      return '<div class="review-edit-card" data-rq-card="'+i+'">'+
+        '<div class="review-edit-head"><div class="review-source-line">'+
+          '<span class="badge warn">Needs Review</span>'+
+          (page?'<span class="badge">Trang '+escapeHtml(page)+'</span>':'')+
+          (qno?'<span class="badge">Câu '+escapeHtml(qno)+'</span>':'')+
+          '<span class="badge">'+escapeHtml(q.topic||'Chưa phân loại')+'</span>'+
+        '</div><button class="danger" data-rq-delete="'+i+'">Bỏ câu</button></div>'+
+        '<div class="field"><label>Stem</label><textarea data-rq-stem>'+escapeHtml(text)+'</textarea></div>'+
+        '<div class="review-edit-options">'+opts.map((opt,oi)=>
+          '<div class="review-edit-option"><input type="radio" name="rq-answer-'+i+'" value="'+oi+'" data-rq-answer '+(draft===oi?'checked':'')+'><input type="text" data-rq-option value="'+escapeHtml(opt)+'"></div>'
+        ).join('')+'</div>'+
+        '<div class="field" style="margin-top:10px"><label>Topic</label><input data-rq-topic value="'+escapeHtml(q.topic||'Chưa phân loại')+'"></div>'+
+        '<div class="small" style="margin-top:8px">'+escapeHtml(q.detection?.evidence||q.answerStatus||'Câu chưa có đáp án đủ chắc chắn.')+'</div>'+
+        '<div class="review-edit-actions"><button data-rq-save="'+i+'">Lưu nháp</button><button class="success" data-rq-promote="'+i+'">Xác nhận → Question Bank</button></div>'+
+      '</div>';
+    }).join('');
+
+    host.querySelectorAll('[data-rq-save]').forEach(btn=>btn.onclick=()=>{
+      const i=Number(btn.dataset.rqSave);const card=host.querySelector('[data-rq-card="'+i+'"]');
+      saveReviewDraft(i,card);alert('Đã lưu chỉnh sửa trong Review Queue.');
+    });
+    host.querySelectorAll('[data-rq-promote]').forEach(btn=>btn.onclick=()=>{
+      const i=Number(btn.dataset.rqPromote);const card=host.querySelector('[data-rq-card="'+i+'"]');
+      promoteReview(i,card);
+    });
+    host.querySelectorAll('[data-rq-delete]').forEach(btn=>btn.onclick=()=>{
+      const i=Number(btn.dataset.rqDelete);
+      if(confirm('Bỏ câu này khỏi Review Queue?')){reviewQueue.splice(i,1);persist();refreshAll();renderReviewTab();}
+    });
+  };
+
+  if(typeof renderImportPreview==='function'){
+    const originalRenderImportPreview=renderImportPreview;
+    window.renderImportPreview=function(){
+      originalRenderImportPreview();
+      const b=importBuffer||{valid:[],review:[]};
+      const commit=document.getElementById('commitImportBtn');
+      if(commit) commit.disabled=!((b.valid||[]).length||(b.review||[]).length);
+      const warn=document.getElementById('importWarning');
+      if(warn&&warn.innerHTML){
+        warn.innerHTML=warn.innerHTML.replace(/Commit đang bị khóa[^<.]*/g,'Các câu này sẽ được lưu vào Review Queue để user tự sửa sau');
+      }
+      const badge=document.getElementById('importStageBadge');
+      if(badge&&(b.review||[]).length){badge.textContent=(b.valid||[]).length+' Ready · '+b.review.length+' Review';}
+    };
+  }
+
+  const commitBtn=document.getElementById('commitImportBtn');
+  if(commitBtn){
+    commitBtn.onclick=function(){
+      const ready=[...(importBuffer.valid||[])];
+      const unresolved=[...(importBuffer.review||[])];
+      if(!ready.length&&!unresolved.length) return;
+      let removed=0;
+
+      if(importBuffer.mode==='replace'&&importBuffer.datasetId){
+        const old=questions.filter(q=>q.datasetId===importBuffer.datasetId);
+        removed=old.length;
+        const oldIds=new Set(old.map(q=>q.id));
+        questions=questions.filter(q=>q.datasetId!==importBuffer.datasetId);
+        oldIds.forEach(id=>delete progress[id]);
+        reviewQueue=reviewQueue.filter(q=>q.datasetId!==importBuffer.datasetId);
+        if(session&&session.queue?.some(id=>oldIds.has(id))) session=null;
+      }
+
+      questions.push(...ready);
+      unresolved.forEach(q=>{
+        reviewQueue.push({
+          ...q,
+          correct:null,
+          answerStatus:'needs_review',
+          queuedAt:new Date().toISOString(),
+          review:{status:'needs_review',answer_basis:'user_review_required',confidence:'unresolved'}
+        });
+      });
+
+      ready.forEach(q=>{
+        const name=cleanMd(q.topic||'');
+        if(name&&!topicRegistry.some(t=>t.name===name)) topicRegistry.push({id:slugTopicId(name),name,createdAt:new Date().toISOString(),source:'import'});
+      });
+      unresolved.forEach(q=>{
+        const name=cleanMd(q.topic||'');
+        if(name&&!topicRegistry.some(t=>t.name===name)) topicRegistry.push({id:slugTopicId(name),name,createdAt:new Date().toISOString(),source:'review'});
+      });
+
+      const imported=ready.length;
+      const queued=unresolved.length;
+      const broken=(importBuffer.invalid||[]).length;
+      const duplicates=importBuffer.duplicate||0;
+      importBuffer=blankImportBuffer();
+      importReviewPage=1;
+      persist();
+      renderImportPreview();
+      refreshAll();
+      renderQuestion();
+      alert('Import hoàn tất: '+imported+' câu vào Question Bank · '+queued+' câu vào Review Queue · '+broken+' Broken · '+duplicates+' Trùng.'+(removed?' Đã thay thế '+removed+' câu cũ.':''));
+    };
+  }
+
+  if(typeof renderReviewQueueSummary==='function'){
+    const oldSummary=renderReviewQueueSummary;
+    window.renderReviewQueueSummary=function(){
+      oldSummary();
+      const el=document.getElementById('reviewQueueSummary');
+      if(el&&reviewQueue.length) el.innerHTML+='<br><span class="small">Mở tab Review Queue để sửa stem/options/topic, chọn đáp án và đưa câu vào Question Bank.</span>';
+    };
+  }
+
+  try{renderImportPreview();renderReviewQueueSummary();renderReviewTab();}catch(e){console.warn('V11 review patch init',e);}
+})();
+<\/script>`;
+    html=html.replace('</body>',patchScript+'\n</body>');
 
     document.open();
     document.write(html);
     document.close();
   }catch(err){
-    document.getElementById('loading').innerHTML='<div style="max-width:680px;padding:32px;text-align:center"><h2>Không thể tải MedQuiz Pink</h2><p>'+String(err.message||err)+'</p><p>Hãy dùng Chrome, Edge, Firefox hoặc Safari phiên bản mới.</p></div>';
+    console.error(err);
+    document.getElementById('loading').innerHTML='<div style="max-width:720px;padding:32px;text-align:center"><h2>Không thể tải MedQuiz Pink</h2><p>'+String(err.message||err)+'</p><p>Hãy refresh cứng trang. Nếu vẫn lỗi, báo lại để kiểm tra bundle deploy.</p></div>';
   }
 })();
 </script>
